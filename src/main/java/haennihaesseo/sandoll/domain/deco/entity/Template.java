@@ -1,6 +1,8 @@
 package haennihaesseo.sandoll.domain.deco.entity;
 
+import haennihaesseo.sandoll.domain.deco.entity.enums.Color;
 import haennihaesseo.sandoll.domain.deco.entity.enums.Size;
+import haennihaesseo.sandoll.domain.deco.entity.enums.Type;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,9 +22,18 @@ public class Template {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "size", nullable = false)
     private Size size;
 
     @Column(name = "image_url", nullable = false)
     private String imageUrl;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "color", nullable = true)
+    private Color color;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = false)
+    private Type type;
 }

@@ -3,7 +3,6 @@ package haennihaesseo.sandoll.domain.letter.entity;
 import haennihaesseo.sandoll.domain.deco.entity.Bgm;
 import haennihaesseo.sandoll.domain.deco.entity.Envelope;
 import haennihaesseo.sandoll.domain.deco.entity.Template;
-import haennihaesseo.sandoll.domain.deco.entity.enums.ReceiverType;
 import haennihaesseo.sandoll.domain.font.entity.Font;
 import haennihaesseo.sandoll.domain.user.entity.User;
 import jakarta.persistence.*;
@@ -31,9 +30,6 @@ public class Letter {
 
     @Column(name = "title", nullable = false)
     private String title;
-
-    @Column(name = "voice_url", nullable = false)
-    private String voiceUrl;
 
     @Column(name = "content", nullable = true, columnDefinition = "TEXT")
     private String content;
@@ -64,11 +60,12 @@ public class Letter {
     @Column(name = "receiver_type", nullable = true)
     private ReceiverType receiverType;
 
-    @Column(name = "voice_keyword", nullable = false)
-    private String voiceKeyword;
-
     @Column(name = "context_keyword", nullable = false)
     private String contextKeyword;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "voice_id", nullable = false)
+    private Voice voice;
 
     @Column(name = "created_at", nullable = false)
     @CurrentTimestamp
