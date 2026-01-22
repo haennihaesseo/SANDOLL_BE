@@ -1,8 +1,8 @@
-package haennihaesseo.sandoll.global.status;
+package haennihaesseo.sandoll.global.base;
 
 import org.springframework.http.HttpStatus;
 
-public interface BaseSuccessStatus {
+public interface BaseErrorStatus {
     HttpStatus getHttpStatus();
     String getCode();
     String getMessage();
