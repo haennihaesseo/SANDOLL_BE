@@ -36,4 +36,7 @@ public class Template {
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
     private Type type;
+
+    @Column(name = "preview_image_url", nullable = false)
+    private String previewImageUrl;
 }
