@@ -7,6 +7,6 @@ files:
 
 hooks:
   AfterInstall:
-    - location: deploy.sh # 파일 복사 후 실행할 스크립트
+    - location: run.sh # Zip 안에 들어있을 '트리거' 파일 이름
       timeout: 300
       runas: ubuntu
