@@ -1,0 +1,45 @@
+version: "3.9"
+
+services:
+  # 애플리케이션 서비스 (Blue/Green 전환 대상)
+  olllim:
+    image: ${DOCKER_IMAGE}
+    # deploy.sh에서 환경변수로 넘겨줄 값들입니다.
+    container_name: ${CONTAINER_NAME}
+    ports:
+      - "${TARGET_PORT}:8080"
+    env_file:
+      - .env.prod
+    volumes:
+      - /home/ubuntu/secrets:/secrets:ro
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - backend
+    restart: unless-stopped
+
+  # 레디스 서비스 (공용으로 사용)
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    command: >
+      redis-server
+      --protected-mode yes
+      --requirepass ${REDIS_PASSWORD}
+      --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 5s
+      retries: 10
+    volumes:
+      - redis-data:/data
+    networks:
+      - backend
+    restart: unless-stopped
+
+networks:
+  backend:
+
+volumes:
+  redis-data:

@@ -1,0 +1,12 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /home/ubuntu/app/ # 파일을 복사할 위치
+    overwrite: yes
+
+hooks:
+  AfterInstall:
+    - location: deploy.sh # 파일 복사 후 실행할 스크립트
+      timeout: 300
+      runas: ubuntu
