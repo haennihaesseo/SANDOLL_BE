@@ -62,6 +62,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Inject Secrets into deploy.sh
+        run: |
+          sed -i 's/DOCKER_USERNAME_PLACEHOLDER/${{ secrets.DOCKER_USERNAME }}/g' deploy.sh
+          sed -i 's/DOCKER_PASSWORD_PLACEHOLDER/${{ secrets.DOCKER_PASSWORD }}/g' deploy.sh
+
       - name: Make Zip File
         run: |
           echo "${{ secrets.ENV_PROD }}" > .env.prod
