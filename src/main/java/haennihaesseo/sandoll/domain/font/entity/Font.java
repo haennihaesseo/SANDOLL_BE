@@ -21,9 +21,6 @@ public class Font {
     @Column(name = "font_url", nullable = false)
     private String fontUrl;
 
-    @Column(name = "image_url", nullable = false)
-    private String imageUrl;
-
     @Column(name = "price", nullable = false)
     private Integer price;
 

@@ -46,10 +46,6 @@ public class Letter {
     @JoinColumn(name = "template_id", nullable = true)
     private Template template;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "bgm_id", nullable = true)
-    private Bgm bgm;
-
     @Column(name = "image_url", nullable = true)
     private String imageUrl;
 

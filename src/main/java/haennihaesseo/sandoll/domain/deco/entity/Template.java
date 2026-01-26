@@ -30,10 +30,6 @@ public class Template {
     private String imageUrl;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "color", nullable = true)
-    private Color color;
-
-    @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
     private Type type;
 

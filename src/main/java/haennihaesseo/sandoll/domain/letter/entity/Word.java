@@ -24,18 +24,14 @@ public class Word {
     private String word;
 
     @Column(name = "start_time", nullable = false)
-    private LocalTime startTime;
+    private Double startTime;
 
     @Column(name = "end_time", nullable = false)
-    private LocalTime endTime;
+    private Double endTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "letter_id", nullable = false)
     private Letter letter;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "font_id", nullable = true)
-    private Font font;
 
     @Column(name = "word_order", nullable = false)
     private Double wordOrder;
