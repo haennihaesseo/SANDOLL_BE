@@ -21,6 +21,9 @@ public class Bgm {
     @Column(name = "bgm_url", nullable = false)
     private String bgmUrl;
 
+    @Column(name = "keyword", nullable = false)
+    private String keyword;
+
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
 
