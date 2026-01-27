@@ -70,6 +70,11 @@ public class Letter {
     @JoinColumn(name = "bgmId", nullable = true)
     private Bgm bgm;
 
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    @Column(name = "letter_status", nullable = false)
+    private LetterStatus letterStatus = LetterStatus.VISIBLE;
+
     @Column(name = "created_at", nullable = false)
     @CurrentTimestamp
     private LocalDateTime createdAt;

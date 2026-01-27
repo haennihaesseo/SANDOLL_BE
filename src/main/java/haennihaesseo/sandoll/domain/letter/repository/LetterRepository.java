@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LetterRepository extends JpaRepository<Letter, Long> {
+    Letter findByLetterIdAndSenderUserId(Long letterId, Long userId);
 }

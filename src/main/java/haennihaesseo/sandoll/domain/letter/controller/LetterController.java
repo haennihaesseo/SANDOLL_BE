@@ -1,9 +1,6 @@
 package haennihaesseo.sandoll.domain.letter.controller;
 
-import haennihaesseo.sandoll.domain.letter.dto.LetterDetailResponse;
-import haennihaesseo.sandoll.domain.letter.dto.ReceiveLetterResponse;
-import haennihaesseo.sandoll.domain.letter.dto.OrderStatus;
-import haennihaesseo.sandoll.domain.letter.dto.SendLetterResponse;
+import haennihaesseo.sandoll.domain.letter.dto.*;
 import haennihaesseo.sandoll.domain.letter.service.LetterService;
 import haennihaesseo.sandoll.domain.letter.status.LetterSuccessStatus;
 import haennihaesseo.sandoll.global.response.ApiResponse;
@@ -35,6 +32,15 @@ public class LetterController {
     ){
         LetterDetailResponse response = letterService.getLetterDetailsByLetter(letterId);
         return ApiResponse.success(LetterSuccessStatus.SUCCESS_202, response);
+    }
+
+    @PostMapping("/delete")
+    public ResponseEntity<ApiResponse<Void>> deleteLetter(
+            @RequestParam(name = "userId") Long userId,
+            @RequestBody LetterDeleteRequest request
+    ){
+        letterService.hideLetter(userId, request.getType(), request.getLetterIds());
+        return ApiResponse.success(LetterSuccessStatus.SUCCESS_203);
     }
 
 }

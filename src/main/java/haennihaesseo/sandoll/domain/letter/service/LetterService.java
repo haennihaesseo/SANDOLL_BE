@@ -1,9 +1,12 @@
 package haennihaesseo.sandoll.domain.letter.service;
 
 import haennihaesseo.sandoll.domain.letter.dto.LetterDetailResponse;
+import haennihaesseo.sandoll.domain.letter.dto.LetterType;
 import haennihaesseo.sandoll.domain.letter.dto.ReceiveLetterResponse;
 import haennihaesseo.sandoll.domain.letter.dto.OrderStatus;
 import haennihaesseo.sandoll.domain.letter.entity.Letter;
+import haennihaesseo.sandoll.domain.letter.entity.LetterStatus;
+import haennihaesseo.sandoll.domain.letter.entity.ReceiverLetterId;
 import haennihaesseo.sandoll.domain.letter.entity.Word;
 import haennihaesseo.sandoll.domain.letter.repository.WordRepository;
 import haennihaesseo.sandoll.domain.letter.status.LetterErrorStatus;
@@ -119,5 +122,27 @@ public class LetterService {
                 .build();
 
         return  result;
+    }
+
+    public void hideLetter(Long userId, LetterType letterType, List<Long> letterIds) {
+
+        userRepository.findById(userId).orElseThrow(() -> new GlobalException(ErrorStatus.USER_NOT_FOUND));
+
+        if (letterType.equals(LetterType.RECEIVE)){
+            for (Long letterId : letterIds) {
+                ReceiverLetterId id = new ReceiverLetterId(userId, letterId);
+                if (!receiverLetterRepository.existsById(id))
+                    throw new LetterException(LetterErrorStatus.NOT_LETTER_OWNER);
+                receiverLetterRepository.deleteById(id);
+            }
+        } else {
+            for (Long letterId : letterIds) {
+                Letter letter = letterRepository.findByLetterIdAndSenderUserId(letterId, userId);
+                if (letter == null)
+                    throw new LetterException(LetterErrorStatus.NOT_LETTER_OWNER);
+                letter.setLetterStatus(LetterStatus.INVISIBLE);
+                letterRepository.save(letter);
+            }
+        }
     }
 }
