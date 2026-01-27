@@ -24,10 +24,6 @@ public class Bgm {
     @Column(name = "keyword", nullable = false)
     private String keyword;
 
-    @Column(name = "is_active", nullable = false)
-    private Boolean isActive;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "letter_id", nullable = false)
-    private Letter letter;
+    @Column(name = "name", nullable = false)
+    private String name;
 }

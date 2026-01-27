@@ -63,6 +63,13 @@ public class Letter {
     @JoinColumn(name = "voice_id", nullable = false)
     private Voice voice;
 
+    @Column(name = "password", nullable = true)
+    private String password;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bgmId", nullable = true)
+    private Bgm bgm;
+
     @Column(name = "created_at", nullable = false)
     @CurrentTimestamp
     private LocalDateTime createdAt;
