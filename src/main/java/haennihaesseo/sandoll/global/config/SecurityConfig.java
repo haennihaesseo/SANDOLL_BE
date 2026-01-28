@@ -41,7 +41,8 @@ public class SecurityConfig {
       "/swagger-ui/**",
       "/swagger-ui.html",
       "/v3/api-docs/**",
-      "/api/letter/voice"
+      "/api/letter/voice",
+      "/api/letter/{letterId}"
   };
 
   private static final String[] ALLOWED_ORIGINS = {

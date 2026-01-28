@@ -28,6 +28,9 @@ public class CachedLetter implements Serializable {
     private Integer duration;
     private String content;
 
+    private String title;
+    private String sender;
+
     @Builder.Default
     private List<CachedWord> words = new ArrayList<>();
 
@@ -41,5 +44,18 @@ public class CachedLetter implements Serializable {
 
     public void addWords(List<CachedWord> words) {
         this.words.addAll(words);
+    }
+
+    public void setInfo(String title, String sender) {
+        this.title = title;
+        this.sender = sender;
+    }
+
+    public void setWords(List<CachedWord> words) {
+        this.words = words;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 }
