@@ -40,7 +40,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ApiResponse<Void>> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
         return ApiResponse.fail(
-            ErrorStatus.CONFLICT
+                ErrorStatus.CONFLICT
         );
     }
 

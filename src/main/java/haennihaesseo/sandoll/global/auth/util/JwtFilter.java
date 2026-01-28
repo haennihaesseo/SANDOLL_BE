@@ -28,10 +28,9 @@ public class JwtFilter extends OncePerRequestFilter {
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-    log.info("[JWT FILTER] path={}, authHeader={}", request.getRequestURI(), request.getHeader("Authorization"));
-
     String token = extractToken(request);
 
+    log.info("[JWT FILTER] token={}", token);
     // 1) 토큰 없으면 그냥 통과
     if (token == null || token.isBlank()) {
       filterChain.doFilter(request, response);
@@ -41,7 +40,6 @@ public class JwtFilter extends OncePerRequestFilter {
     try {
       jwtUtil.validateAccessToken(token);
       Long userId = jwtUtil.getUserIdFromAccessToken(token);
-
       User user = userRepository.findByUserId(userId)
           .orElseThrow(() -> new GlobalException(ErrorStatus.NOT_FOUND));
 
@@ -66,7 +64,7 @@ public class JwtFilter extends OncePerRequestFilter {
   protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
     // 특정 경로는 필터링하지 않도록 설정
     String path = request.getRequestURI();
-    return path.contains("/oauth2/") || path.startsWith("/api/token") || path.startsWith("/actuator/health") || path.contains("/login/") || path.startsWith("/");
+    return path.contains("/oauth2/") || path.startsWith("/api/token") || path.startsWith("/actuator/health") || path.contains("/login/") || path.equals("/");
   }
 
   private String extractToken(HttpServletRequest request) {

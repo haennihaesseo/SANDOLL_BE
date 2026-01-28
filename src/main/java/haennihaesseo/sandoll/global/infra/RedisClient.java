@@ -1,6 +1,9 @@
 package haennihaesseo.sandoll.global.infra;
 
 import java.time.Duration;
+import java.util.Map;
+import java.util.Objects;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -12,7 +15,7 @@ public class RedisClient {
 
   private final StringRedisTemplate redisTemplate;
 
-  public String getData(String prefix, String key){
+  public String getData(String prefix, String key) {
     ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
     return valueOperations.get(prefix + ":" + key);
   }

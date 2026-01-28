@@ -26,8 +26,8 @@ public enum ErrorStatus implements BaseErrorStatus {
   METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "405", "허용되지 않은 메소드입니다."),
   CONFLICT(HttpStatus.CONFLICT, "409", "이미 사용 중인 값입니다."),
 
-
-
+  USER_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당 유저가 존재하지 않습니다."),
+  JSON_PARSING_FAIL(HttpStatus.BAD_REQUEST, "400", "Json 파싱에 실패하였습니다."),
   /**
    *  Error Code
    *  500 : 서버 내부 오류

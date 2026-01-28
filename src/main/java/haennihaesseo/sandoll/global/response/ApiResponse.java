@@ -75,7 +75,7 @@ public class ApiResponse<T> {
             .message(message)
             .code(errorStatus.getCode())
             .data(null)
-            .timestamp(OffsetDateTime.now())
+//            .timestamp(OffsetDateTime.now())
             .build();
         return new ResponseEntity<>(body, errorStatus.getHttpStatus());
     }
@@ -87,7 +87,7 @@ public class ApiResponse<T> {
             .message(errorStatus.getMessage())
             .code(errorStatus.getCode())
             .data(null)
-            .timestamp(OffsetDateTime.now())
+//            .timestamp(OffsetDateTime.now())
             .build();
         return new ResponseEntity<>(body, errorStatus.getHttpStatus());
     }

@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum DecoErrorStatus implements BaseErrorStatus {
 
-
+    BGM_GENERATING(HttpStatus.BAD_REQUEST, "BGM_GENERATING", "현재 배경음악을 생성 중입니다. 잠시 후 다시 확인해주세요.")
     ;
 
     private final HttpStatus httpStatus;

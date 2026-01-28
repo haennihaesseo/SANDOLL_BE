@@ -19,6 +19,10 @@ public class TemplateService {
     private final TemplateRepository templateRepository;
     private final DecoConverter decoConverter;
 
+    /**
+     * DB의 전체 템플릿 조회
+     * @return templates(templateId, name, previewImageUrl)
+     */
     public TemplatesResponse getAllTemplates() {
         List<Template> templates = templateRepository.findAll();
         return decoConverter.toTemplatesResponse(templates);
