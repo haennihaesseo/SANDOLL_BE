@@ -58,6 +58,7 @@ public class LetterService {
     // 5. 응답 반환
     return VoiceSaveResponse.builder()
         .letterId(letterId)
+        .letterKey(letterKey)
         .voiceUrl(fileUrl)
         .duration(sttResult.getTotalDuration().intValue())
         .content(sttResult.getFullText())
