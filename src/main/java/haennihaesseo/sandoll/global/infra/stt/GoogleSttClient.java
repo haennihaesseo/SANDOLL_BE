@@ -40,9 +40,6 @@ public class GoogleSttClient {
             String contentType = audioFile.getContentType();
             RecognitionConfig.AudioEncoding encoding = getAudioEncoding(contentType);
 
-            log.info("[STT] 파일명: {}, ContentType: {}, 크기: {} bytes, 인코딩: {}",
-                    audioFile.getOriginalFilename(), contentType, audioBytes.length, encoding);
-
             return transcribeAudio(audioBytes, encoding);
         } catch (IOException e) {
             log.error("오디오 파일 읽기 실패", e);
