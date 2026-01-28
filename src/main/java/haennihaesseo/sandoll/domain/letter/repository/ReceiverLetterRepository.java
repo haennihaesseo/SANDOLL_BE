@@ -17,4 +17,6 @@ public interface ReceiverLetterRepository extends JpaRepository<ReceiverLetter, 
 
     @Query("select rl.id.letterId from ReceiverLetter rl where rl.id.receiverId= :receiverId order by rl.createdAt asc")
     List<Long> findIdLetterIdByIdReceiverIdOrderByCreatedAtAsc(@Param("receiverId") Long userId);
+
+    boolean existsByIdReceiverIdAndIdLetterId(Long userId, Long letterId);
 }
