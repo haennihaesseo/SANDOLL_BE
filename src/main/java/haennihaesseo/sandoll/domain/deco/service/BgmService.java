@@ -7,6 +7,7 @@ import com.nimbusds.oauth2.sdk.GeneralException;
 import haennihaesseo.sandoll.domain.deco.converter.DecoConverter;
 import haennihaesseo.sandoll.domain.deco.dto.response.BgmsResponse;
 import haennihaesseo.sandoll.domain.deco.entity.Bgm;
+import haennihaesseo.sandoll.domain.deco.exception.DecoException;
 import haennihaesseo.sandoll.domain.deco.repository.BgmRepository;
 import haennihaesseo.sandoll.domain.deco.status.DecoErrorStatus;
 import haennihaesseo.sandoll.domain.letter.cache.CachedLetter;
@@ -73,11 +74,10 @@ public class BgmService {
      * @return bgm객체 리스트
      */
     public BgmsResponse getBgmsByLetterId(String letterId) {
-
         // redis에서 편지 내용 바탕으로 생성된 bgm 정보 가져오기
         String jsonBgms = redisClient.getData("bgms", letterId);
         if (jsonBgms == null) {
-            throw new GlobalException(DecoErrorStatus.BGM_GENERATING);
+            throw new DecoException(DecoErrorStatus.BGM_GENERATING);
         }
         try {
             List<BgmsResponse.BgmDto> bgmDtos = objectMapper.readValue(jsonBgms, new TypeReference<List<BgmsResponse.BgmDto>>() {});
@@ -102,10 +102,16 @@ public class BgmService {
         } else {
             String jsonBgms = redisClient.getData("bgms", letterId);
 
+            if (jsonBgms == null) {
+                throw new DecoException(DecoErrorStatus.BGM_NOT_FOUND);
+            }
             try {
-
                 List<BgmsResponse.BgmDto> bgmDtos = objectMapper.readValue(jsonBgms, new TypeReference<List<BgmsResponse.BgmDto>>() {});
-                BgmsResponse.BgmDto bgmDto = bgmDtos.get(bgmId.intValue() - 1);
+                BgmsResponse.BgmDto bgmDto = bgmDtos.stream()
+                        .filter(dto -> dto.bgmId().equals(bgmId))
+                        .findFirst()
+                        .orElseThrow(() -> new DecoException(DecoErrorStatus.BGM_NOT_FOUND));
+
                 cachedLetter.setBgmUrl(bgmDto.bgmUrl());
                 cachedLetterRepository.save(cachedLetter);
 
