@@ -39,16 +39,14 @@ public class LetterShareService {
      * @return
      */
     public SecretLetterKeyResponse getLetterSecretKeyByLetterId(Long userId, Long letterId) {
-        Letter letter = letterRepository.findByLetterIdAndSenderUserId(letterId, userId);
-        if (letter == null)
+        if (!receiverLetterRepository.existsByIdReceiverIdAndIdLetterId(userId, letterId))
             throw new LetterException(LetterErrorStatus.NOT_OWN_LETTER);
-
         try{
             String secretLetterKey = aesUtil.encrypt(letterId);
             return new SecretLetterKeyResponse(secretLetterKey);
         } catch(Exception e){
             log.warn("공유키 암호화 중 예외 발생: letterId = {}", letterId, e);
-            throw new RuntimeException(e);
+            throw new LetterException(LetterErrorStatus.LETTER_ENCRYPT_FAILED);
         }
     }
 

@@ -15,7 +15,7 @@ public enum LetterErrorStatus implements BaseErrorStatus {
     LETTER_NEED_PASSWORD(HttpStatus.UNAUTHORIZED, "LETTER_NEED_PASSWORD", "비밀번호가 필요합니다."),
     LETTER_WRONG_PASSWORD(HttpStatus.FORBIDDEN, "LETTER_WRONG_PASSWORD", "비밀번호가 옳지 않습니다. 다시 시도해주세요"),
 
-    NOT_OWN_LETTER(HttpStatus.FORBIDDEN, "NOT_OWN_LETTER", "편지 작성자가 아닙니다"),
+    NOT_OWN_LETTER(HttpStatus.FORBIDDEN, "NOT_OWN_LETTER", "편지 소유자가 아닙니다"),
     LETTER_ENCRYPT_FAILED(HttpStatus.BAD_REQUEST, "LETTER_ENCRYPT_FAILED", "편지 링크가 생성되지 못했습니다."),
     LETTER_DECRYPT_FAILED(HttpStatus.BAD_REQUEST, "LETTER_DECRYPT_FAILED", "편지 링크가 잘못되었습니다."),
 

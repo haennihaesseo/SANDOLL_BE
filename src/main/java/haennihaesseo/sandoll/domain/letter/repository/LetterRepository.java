@@ -18,4 +18,6 @@ public interface LetterRepository extends JpaRepository<Letter, Long> {
 
     @Query("select l.letterId from Letter l where l.sender.userId = :userId and l.letterStatus = :letterStatus order by l.createdAt asc")
     List<Long> findIdLetterIdBySenderUserIdOrderByCreatedAtAsc(@Param("userId") Long userId, @Param("letterStatus") LetterStatus letterStatus);
+
+    boolean existsByLetterIdAndSenderUserId(Long letterId, Long userId);
 }

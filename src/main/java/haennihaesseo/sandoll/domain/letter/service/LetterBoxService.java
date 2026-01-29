@@ -60,7 +60,10 @@ public class LetterBoxService {
         return results;
     }
 
-    public LetterDetailResponse getLetterDetailsByLetter(Long letterId) {
+    public LetterDetailResponse getLetterDetailsByLetter(Long userId, Long letterId) {
+        if (!letterRepository.existsByLetterIdAndSenderUserId(letterId, userId)
+                && !receiverLetterRepository.existsByIdReceiverIdAndIdLetterId(userId, letterId))
+            throw new LetterException(LetterErrorStatus.NOT_OWN_LETTER);
          return letterDetailService.getLetterDetails(letterId);
     }
 

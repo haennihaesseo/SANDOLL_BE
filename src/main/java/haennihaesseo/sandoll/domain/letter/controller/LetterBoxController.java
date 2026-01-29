@@ -51,7 +51,7 @@ public class LetterBoxController {
             @PathVariable(name = "letterId") Long letterId
     ){
         Long userId = userPrincipal.getUser().getUserId();
-        LetterDetailResponse response = letterBoxService.getLetterDetailsByLetter(letterId);
+        LetterDetailResponse response = letterBoxService.getLetterDetailsByLetter(userId, letterId);
         return ApiResponse.success(LetterSuccessStatus.SUCCESS_202, response);
     }
 
