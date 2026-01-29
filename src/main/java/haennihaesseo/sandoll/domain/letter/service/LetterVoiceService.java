@@ -39,8 +39,11 @@ public class LetterVoiceService {
 
     log.info("[분석 완료] letterId={}, 추천 폰트: {}", letterId, pythonResponse.getRecommendedFonts());
 
-    // 추천 폰트 정보 이름으로 매칭 후 응답 변환
+    // 추천 폰트 정보 이름으로 매칭
     List<Font> recommendedFonts = fontRepository.findByNameIn(pythonResponse.getRecommendedFonts());
+
+    // 추천 폰트 이름으로 캐쉬에 저장
+    cachedLetter.setRecommendedVoiceFonts(recommendedFonts);
 
     return letterConverter.toVoiceAnalysisResponse(pythonResponse.getAnalysisResult(), recommendedFonts);
   }
