@@ -31,6 +31,9 @@ public class CachedLetter implements Serializable {
     private String title;
     private String sender;
 
+    private String contextKeywords;
+    private String recommendedVoiceFonts;
+
     @Builder.Default
     private List<CachedWord> words = new ArrayList<>();
 

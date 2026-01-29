@@ -26,6 +26,10 @@ public class Font {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private FontType type;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "bone_keyword", nullable = true)
     private Bone boneKeyword;
@@ -41,12 +45,4 @@ public class Font {
     @Enumerated(EnumType.STRING)
     @Column(name = "distance_keyword", nullable = true)
     private Distance distanceKeyword;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "dynamic_keyword", nullable = true)
-    private Dynamic dynamicKeyword;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "speed_keyword", nullable = true)
-    private Speed speedKeyword;
 }

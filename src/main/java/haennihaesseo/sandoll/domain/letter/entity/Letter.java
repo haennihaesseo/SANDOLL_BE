@@ -45,12 +45,6 @@ public class Letter {
     @JoinColumn(name = "template_id", nullable = false)
     private Template template;
 
-    @Column(name = "image_url", nullable = true)
-    private String imageUrl;
-
-    @Column(name = "context_keyword", nullable = false)
-    private String contextKeyword;
-
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "voice_id", nullable = false)
     private Voice voice;

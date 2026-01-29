@@ -1,5 +1,5 @@
 package haennihaesseo.sandoll.domain.font.entity.enums;
 
-public enum Dynamic {
-    STRONG, SOFT
+public enum FontType {
+  VOICE, CONTEXT
 }

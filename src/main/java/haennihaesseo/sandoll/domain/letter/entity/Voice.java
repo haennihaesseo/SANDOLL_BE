@@ -24,7 +24,4 @@ public class Voice {
 
     @Column(name = "duration", nullable = false)
     private Integer duration;
-
-    @Column(name = "voice_keyword", nullable = false)
-    private String voiceKeyword;
 }
