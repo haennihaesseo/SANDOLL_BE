@@ -40,4 +40,4 @@ out/
 .env.prod
 dump.rdb
 
-google-stt-key.json
+src/main/resources/google-stt-key.json

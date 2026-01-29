@@ -21,6 +21,13 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Make GitHub Secrets files
+        run: |
+          cat <<EOF > ./src/main/resources/google-stt-key.json
+          ${{ secrets.GOOGLE_STT_KEY }}
+          EOF
+        shell: bash
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
 
@@ -64,8 +71,7 @@ jobs:
       - name: Make Zip File
         run: |
           echo "${{ secrets.ENV_PROD }}" > .env.prod
-          printf '%s' "${{ secrets.GOOGLE_STT_KEY }}" > google-stt-key.json
-          zip -r ./olllim-deploy.zip appspec.yml docker-compose.yml .env.prod run.sh google-stt-key.json
+          zip -r ./olllim-deploy.zip appspec.yml docker-compose.yml .env.prod run.sh
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
