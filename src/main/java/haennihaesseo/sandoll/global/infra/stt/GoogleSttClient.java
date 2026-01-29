@@ -5,9 +5,8 @@ import com.google.cloud.speech.v1.*;
 import com.google.protobuf.ByteString;
 import haennihaesseo.sandoll.global.exception.GlobalException;
 import haennihaesseo.sandoll.global.status.ErrorStatus;
+import haennihaesseo.sandoll.global.util.ResourceLoader;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,9 +24,10 @@ public class GoogleSttClient {
 
     private final SpeechSettings speechSettings;
 
-    public GoogleSttClient(@Value("${spring.cloud.gcp.credentials.location}") Resource credentialsResource) {
+    public GoogleSttClient() {
         try {
-            GoogleCredentials credentials = GoogleCredentials.fromStream(credentialsResource.getInputStream());
+            GoogleCredentials credentials = GoogleCredentials.fromStream(
+                    ResourceLoader.getResourceAsStream("google-stt-key.json"));
             this.speechSettings = SpeechSettings.newBuilder()
                     .setCredentialsProvider(() -> credentials)
                     .build();
