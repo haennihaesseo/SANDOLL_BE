@@ -1,8 +1,10 @@
 package haennihaesseo.sandoll.domain.letter.controller;
 
 import haennihaesseo.sandoll.domain.letter.dto.request.LetterInfoRequest;
+import haennihaesseo.sandoll.domain.letter.dto.response.VoiceAnalysisResponse;
 import haennihaesseo.sandoll.domain.letter.dto.response.VoiceSaveResponse;
 import haennihaesseo.sandoll.domain.letter.service.LetterService;
+import haennihaesseo.sandoll.domain.letter.service.LetterVoiceService;
 import haennihaesseo.sandoll.domain.letter.status.LetterSuccessStatus;
 import haennihaesseo.sandoll.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class LetterController {
 
   private final LetterService letterService;
+  private final LetterVoiceService letterVoiceService;
 
   @Operation(summary = "[3.1] 녹음 파일 저장 및 STT 편지 내용 조회, 편지 작성 키 발급")
   @PostMapping(value = "/voice", consumes = "multipart/form-data")
@@ -51,5 +55,12 @@ public class LetterController {
     return ApiResponse.success(LetterSuccessStatus.SUCCESS_302);
   }
 
+  @GetMapping("/voice")
+  public ResponseEntity<ApiResponse<VoiceAnalysisResponse>> analyzeVoice(
+      @RequestHeader("letterId") String letterId
+  ) {
+    VoiceAnalysisResponse response = letterVoiceService.analyzeVoice(letterId);
+    return ApiResponse.success(LetterSuccessStatus.SUCCESS_303, response);
+  }
 }
 
