@@ -7,8 +7,6 @@ import haennihaesseo.sandoll.domain.letter.dto.response.*;
 import haennihaesseo.sandoll.domain.letter.entity.Letter;
 import haennihaesseo.sandoll.domain.letter.entity.LetterStatus;
 import haennihaesseo.sandoll.domain.letter.entity.ReceiverLetterId;
-import haennihaesseo.sandoll.domain.letter.entity.Word;
-import haennihaesseo.sandoll.domain.letter.repository.WordRepository;
 import haennihaesseo.sandoll.domain.letter.status.LetterErrorStatus;
 import haennihaesseo.sandoll.domain.letter.exception.LetterException;
 import haennihaesseo.sandoll.domain.letter.repository.LetterRepository;
@@ -32,8 +30,7 @@ public class LetterBoxService {
     private final LetterRepository letterRepository;
     private final ReceiverLetterRepository receiverLetterRepository;
     private final UserRepository userRepository;
-    private final WordRepository wordRepository;
-    private final LetterBoxConverter letterBoxConverter;
+    private final LetterDetailService letterDetailService;
 
     public List<ReceiveLetterResponse> getReceivedLettersByUser(Long userId, OrderStatus status) {
 
@@ -60,16 +57,11 @@ public class LetterBoxService {
         return results;
     }
 
-    public LetterDetailResponse getLetterDetailsByLetter(Long letterId) {
-
-        Letter letter = letterRepository.findById(letterId)
-                .orElseThrow(() -> new LetterException(LetterErrorStatus.LETTER_NOT_FOUND));
-
-        List<Word> words = wordRepository.findByLetterLetterIdOrderByWordOrderAsc(letterId);
-
-        return letterBoxConverter.toLetterDetailResponse(letter, letter.getBgm(),
-                        letter.getTemplate(), letter.getDefaultFont(),
-                        letter.getVoice(), words);
+    public LetterDetailResponse getLetterDetailsByLetter(Long userId, Long letterId) {
+        if (!letterRepository.existsByLetterIdAndSenderUserId(letterId, userId)
+                && !receiverLetterRepository.existsByIdReceiverIdAndIdLetterId(userId, letterId))
+            throw new LetterException(LetterErrorStatus.NOT_OWN_LETTER);
+        return letterDetailService.getLetterDetails(letterId);
     }
 
     @Transactional

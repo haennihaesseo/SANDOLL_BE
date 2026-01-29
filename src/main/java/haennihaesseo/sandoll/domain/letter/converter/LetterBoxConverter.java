@@ -17,6 +17,7 @@ public class LetterBoxConverter {
 
     public LetterDetailResponse toLetterDetailResponse(Letter letter, Bgm bgm, Template template, Font font, Voice voice, List<Word> words){
         return LetterDetailResponse.builder()
+                .letterId(letter.getLetterId())
                 .title(letter.getTitle())
                 .sender(letter.getSenderName())
                 .content(letter.getContent())

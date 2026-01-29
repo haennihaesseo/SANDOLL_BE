@@ -70,7 +70,7 @@ public class JwtFilter extends OncePerRequestFilter {
         || path.contains("/login/")
         || path.equals("/")
         || path.startsWith("/swagger-ui")
-        || path.startsWith("/v3/api-docs");
+        || path.startsWith("/v3/api-docs") || path.startsWith("/api/letter/view");
   }
 
   private String extractToken(HttpServletRequest request) {
