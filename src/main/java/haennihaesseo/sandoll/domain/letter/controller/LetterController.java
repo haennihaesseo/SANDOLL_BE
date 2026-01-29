@@ -55,6 +55,9 @@ public class LetterController {
     return ApiResponse.success(LetterSuccessStatus.SUCCESS_302);
   }
 
+  @Operation(
+      summary = "[3.3] 목소리 분석 요청 (추천 목소리 폰트 조회) "
+  )
   @GetMapping("/voice")
   public ResponseEntity<ApiResponse<VoiceAnalysisResponse>> analyzeVoice(
       @RequestHeader("letterId") String letterId
@@ -62,5 +65,19 @@ public class LetterController {
     VoiceAnalysisResponse response = letterVoiceService.analyzeVoice(letterId);
     return ApiResponse.success(LetterSuccessStatus.SUCCESS_303, response);
   }
+
+  @Operation(
+      summary = "[3.4] 목소리 분석 폰트 적용 / [3.7] 폰트 적용"
+  )
+  @PostMapping("/font")
+  public ResponseEntity<ApiResponse<Void>> applyFont(
+      @RequestHeader("letterId") String letterId,
+      @RequestBody @Valid Long fontId
+  ) {
+    letterService.applyFont(letterId, fontId);
+    return ApiResponse.success(LetterSuccessStatus.SUCCESS_304);
+  }
+
+
 }
 

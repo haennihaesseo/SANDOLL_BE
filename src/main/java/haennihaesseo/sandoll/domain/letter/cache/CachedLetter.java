@@ -34,6 +34,8 @@ public class CachedLetter implements Serializable {
     private String contextKeywords;
     private String recommendedVoiceFonts;
 
+    private Long fontId;
+
     @Builder.Default
     private List<CachedWord> words = new ArrayList<>();
 
@@ -60,5 +62,9 @@ public class CachedLetter implements Serializable {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public void setFontId(Long fontId) {
+        this.fontId = fontId;
     }
 }
