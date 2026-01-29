@@ -29,18 +29,7 @@ public class LetterDetailService {
                 .orElseThrow(() -> new LetterException(LetterErrorStatus.LETTER_NOT_FOUND));
 
         List<Word> words = wordRepository.findByLetterLetterIdOrderByWordOrderAsc(letterId);
-        List<LetterDetailResponse.WordInfo> wordInfos = new ArrayList<>();
 
-        for (Word word : words) {
-            wordInfos.add(
-                    LetterDetailResponse.WordInfo.builder()
-                            .wordId(word.getWordId())
-                            .word(word.getWord())
-                            .startTime(word.getStartTime())
-                            .endTime(word.getEndTime())
-                            .build()
-            );
-        }
         return letterBoxConverter.toLetterDetailResponse(letter, letter.getBgm(),
                 letter.getTemplate(), letter.getDefaultFont(),
                 letter.getVoice(), words);

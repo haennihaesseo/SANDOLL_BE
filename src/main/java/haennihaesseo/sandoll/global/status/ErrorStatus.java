@@ -27,11 +27,13 @@ public enum ErrorStatus implements BaseErrorStatus {
   CONFLICT(HttpStatus.CONFLICT, "409", "이미 사용 중인 값입니다."),
 
   USER_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당 유저가 존재하지 않습니다."),
+  PAYLOAD_TOO_LARGE(HttpStatus.PAYLOAD_TOO_LARGE, "413", "요청한 데이터의 크기가 너무 큽니다."),
 
   /**
    *  Error Code
    *  500 : 서버 내부 오류
    */
+  STT_SERVICE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "500", "STT 서비스 오류입니다."),
   INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "500", "서버 내부 오류입니다.");
 
   private final HttpStatus httpStatus;

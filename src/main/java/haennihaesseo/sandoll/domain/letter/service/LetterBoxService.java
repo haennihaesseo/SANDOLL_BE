@@ -7,8 +7,6 @@ import haennihaesseo.sandoll.domain.letter.dto.response.*;
 import haennihaesseo.sandoll.domain.letter.entity.Letter;
 import haennihaesseo.sandoll.domain.letter.entity.LetterStatus;
 import haennihaesseo.sandoll.domain.letter.entity.ReceiverLetterId;
-import haennihaesseo.sandoll.domain.letter.entity.Word;
-import haennihaesseo.sandoll.domain.letter.repository.WordRepository;
 import haennihaesseo.sandoll.domain.letter.status.LetterErrorStatus;
 import haennihaesseo.sandoll.domain.letter.exception.LetterException;
 import haennihaesseo.sandoll.domain.letter.repository.LetterRepository;
@@ -19,6 +17,7 @@ import haennihaesseo.sandoll.global.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,15 +30,13 @@ public class LetterBoxService {
     private final LetterRepository letterRepository;
     private final ReceiverLetterRepository receiverLetterRepository;
     private final UserRepository userRepository;
-    private final WordRepository wordRepository;
-    private final LetterBoxConverter letterBoxConverter;
     private final LetterDetailService letterDetailService;
 
     public List<ReceiveLetterResponse> getReceivedLettersByUser(Long userId, OrderStatus status) {
 
         userRepository.findById(userId).orElseThrow(() -> new GlobalException(ErrorStatus.USER_NOT_FOUND));
 
-        List<Long> letterIds = (status.equals(OrderStatus.EARLIEST))
+        List<Long> letterIds = (status.equals(OrderStatus.LATEST))
                 ? receiverLetterRepository.findIdLetterIdByIdReceiverIdOrderByCreatedAtDesc(userId)
                 : receiverLetterRepository.findIdLetterIdByIdReceiverIdOrderByCreatedAtAsc(userId);
 
@@ -64,9 +61,10 @@ public class LetterBoxService {
         if (!letterRepository.existsByLetterIdAndSenderUserId(letterId, userId)
                 && !receiverLetterRepository.existsByIdReceiverIdAndIdLetterId(userId, letterId))
             throw new LetterException(LetterErrorStatus.NOT_OWN_LETTER);
-         return letterDetailService.getLetterDetails(letterId);
+        return letterDetailService.getLetterDetails(letterId);
     }
 
+    @Transactional
     public void hideLetter(Long userId, LetterType letterType, List<Long> letterIds) {
 
         userRepository.findById(userId).orElseThrow(() -> new GlobalException(ErrorStatus.USER_NOT_FOUND));

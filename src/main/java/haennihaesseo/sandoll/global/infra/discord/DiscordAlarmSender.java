@@ -31,7 +31,8 @@ public class DiscordAlarmSender {
           .bodyValue(discordUtil.createMessage(exception, httpServletRequest))
           .retrieve()
           .bodyToMono(Void.class)
-          .block();
+          .doOnError(e -> log.error("Failed to send Discord alarm", e))
+          .subscribe();
     }
   }
 }

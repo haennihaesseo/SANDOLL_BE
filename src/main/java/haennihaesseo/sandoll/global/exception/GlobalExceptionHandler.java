@@ -3,12 +3,19 @@ package haennihaesseo.sandoll.global.exception;
 import haennihaesseo.sandoll.global.response.ApiResponse;
 import haennihaesseo.sandoll.global.status.ErrorStatus;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @Slf4j
 @RestControllerAdvice
@@ -52,6 +59,28 @@ public class GlobalExceptionHandler {
         return ApiResponse.fail(
                 ErrorStatus.BAD_REQUEST
         );
+    }
+
+    /**
+     * MethodArgumentNotValidException 처리 (RequestBody로 들어온 필드들의 유효성 검증에 실패한 경우)
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    protected ResponseEntity<ApiResponse<Void>> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
+        String combinedErrors = ex.getBindingResult().getFieldErrors().stream()
+            .map(DefaultMessageSourceResolvable::getDefaultMessage)
+            .collect(Collectors.joining(", "));
+        log.error("Validation error: {}", combinedErrors);
+        return ApiResponse.fail(ErrorStatus.BAD_REQUEST, combinedErrors);
+    }
+
+    /**
+     * MaxUploadSizeExceededException 처리 (업로드 파일 크기 초과)
+     */
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    protected ResponseEntity<ApiResponse<Void>> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException ex) {
+        log.error("Max upload size exceeded: {}", ex.getMessage());
+        log.error("Stack trace: ", ex);
+        return ApiResponse.fail(ErrorStatus.PAYLOAD_TOO_LARGE, "파일 크기가 너무 큽니다.");
     }
 
     /**

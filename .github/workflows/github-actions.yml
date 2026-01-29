@@ -64,7 +64,8 @@ jobs:
       - name: Make Zip File
         run: |
           echo "${{ secrets.ENV_PROD }}" > .env.prod
-          zip -r ./olllim-deploy.zip appspec.yml docker-compose.yml .env.prod run.sh
+          printf '%s' "${{ secrets.GOOGLE_STT_KEY }}" > google-stt-key.json
+          zip -r ./olllim-deploy.zip appspec.yml docker-compose.yml .env.prod run.sh google-stt-key.json
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
