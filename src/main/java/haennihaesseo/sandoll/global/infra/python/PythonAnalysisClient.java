@@ -2,6 +2,7 @@ package haennihaesseo.sandoll.global.infra.python;
 
 import haennihaesseo.sandoll.global.infra.python.dto.PythonVoiceAnalysisRequest;
 import haennihaesseo.sandoll.global.infra.python.dto.PythonVoiceAnalysisResponse;
+import java.time.Duration;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -29,7 +30,7 @@ public class PythonAnalysisClient {
                 .bodyValue(request)
                 .retrieve()
                 .bodyToMono(PythonVoiceAnalysisResponse.class)
-                .block();
+                .block(Duration.ofSeconds(20)); // 최대 20초 대기, 추후 테스트 후 조정할 예정
 
         log.info("[Python] 분석 완료 - 추천 폰트: {}, 분석 결과: {}",
                 response != null ? response.getRecommendedFonts() : "null",
