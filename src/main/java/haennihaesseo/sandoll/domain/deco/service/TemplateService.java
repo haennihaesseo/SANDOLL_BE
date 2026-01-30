@@ -43,7 +43,6 @@ public class TemplateService {
      * @param templateId
      * @return
      */
-    @Transactional
     public TemplateImageResponse setTemplateToLetter(String letterId, Long templateId) {
 
         CachedLetter cachedLetter = cachedLetterRepository.findById(letterId)

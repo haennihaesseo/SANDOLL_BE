@@ -3,10 +3,8 @@ package haennihaesseo.sandoll.domain.deco.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nimbusds.oauth2.sdk.GeneralException;
 import haennihaesseo.sandoll.domain.deco.converter.DecoConverter;
 import haennihaesseo.sandoll.domain.deco.dto.response.BgmsResponse;
-import haennihaesseo.sandoll.domain.deco.entity.Bgm;
 import haennihaesseo.sandoll.domain.deco.exception.DecoException;
 import haennihaesseo.sandoll.domain.deco.repository.BgmRepository;
 import haennihaesseo.sandoll.domain.deco.status.DecoErrorStatus;
@@ -28,9 +26,7 @@ import java.util.List;
 @Slf4j
 public class BgmService {
 
-    private final BgmRepository bgmRepository;
     private final RedisClient redisClient;
-    private final DecoConverter decoConverter;
     private final ObjectMapper objectMapper;
     private final CachedLetterRepository cachedLetterRepository;
 
