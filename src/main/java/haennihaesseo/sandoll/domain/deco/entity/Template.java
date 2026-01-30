@@ -28,10 +28,6 @@ public class Template {
     @Column(name = "image_url", nullable = false)
     private String imageUrl;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "type", nullable = false)
-    private Type type;
-
     @Column(name = "preview_image_url", nullable = false)
     private String previewImageUrl;
 }

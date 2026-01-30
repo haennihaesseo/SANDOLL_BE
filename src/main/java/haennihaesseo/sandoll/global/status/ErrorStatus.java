@@ -28,7 +28,7 @@ public enum ErrorStatus implements BaseErrorStatus {
 
   USER_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당 유저가 존재하지 않습니다."),
   PAYLOAD_TOO_LARGE(HttpStatus.PAYLOAD_TOO_LARGE, "413", "요청한 데이터의 크기가 너무 큽니다."),
-
+  JSON_PARSING_FAIL(HttpStatus.BAD_REQUEST, "400", "Json 파싱에 실패하였습니다."),
   /**
    *  Error Code
    *  500 : 서버 내부 오류
