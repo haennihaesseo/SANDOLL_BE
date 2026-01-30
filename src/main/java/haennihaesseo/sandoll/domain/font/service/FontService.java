@@ -38,6 +38,7 @@ public class FontService {
 
     // 폰트 적용
     cachedLetter.setFontId(fontId);
+    cachedLetterRepository.save(cachedLetter);
   }
 
 }
