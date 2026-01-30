@@ -35,8 +35,8 @@ public class Font {
     private Bone boneKeyword;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "target_keyword", nullable = true)
-    private Target targetKeyword;
+    @Column(name = "writer_keyword", nullable = true)
+    private Writer writerKeyword;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "situation_keyword", nullable = true)
