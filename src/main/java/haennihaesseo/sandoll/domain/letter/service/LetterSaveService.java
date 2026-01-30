@@ -38,6 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 
 @Service
@@ -138,20 +139,33 @@ public class LetterSaveService {
      */
     @Transactional
     public void updateLetterPasswordBySecretLetterKey(Long userId, String secretLetterKey, String password) {
-        Long letterId = aesUtil.decrypt(secretLetterKey);
+        Long letterId = 0L;
+        try {
+            letterId = aesUtil.decrypt(secretLetterKey);
+        } catch (Exception e){
+            log.warn("공유키 복호화 중 예외 발생: secretLetterKey = {}", secretLetterKey, e);
+            throw new LetterException(LetterErrorStatus.LETTER_DECRYPT_FAILED);
+        }
 
         Letter letter = letterRepository.findById(letterId)
                 .orElseThrow(() -> new LetterException(LetterErrorStatus.LETTER_NOT_FOUND));
 
-        if (!letterRepository.existsByLetterIdAndSenderUserId(letterId, userId)) {
+        if (!letter.getSender().getUserId().equals(userId))
             throw new LetterException(LetterErrorStatus.NOT_LETTER_OWNER);
-        }
+
         letter.setPassword(passwordEncoder.encode(password));
         letterRepository.save(letter);
     }
 
     public LetterDetailResponse viewLetterBehindShare(Long userId, String secretLetterKey) {
-        Long letterId = aesUtil.decrypt(secretLetterKey);
+        Long letterId = 0L;
+
+        try {
+            letterId = aesUtil.decrypt(secretLetterKey);
+        } catch (Exception e){
+            log.warn("공유키 복호화 중 예외 발생: secretLetterKey = {}", secretLetterKey, e);
+            throw new LetterException(LetterErrorStatus.LETTER_DECRYPT_FAILED);
+        }
 
         Letter letter = letterRepository.findById(letterId)
                 .orElseThrow(() -> new LetterException(LetterErrorStatus.LETTER_NOT_FOUND));

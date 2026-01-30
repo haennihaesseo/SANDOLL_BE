@@ -1,12 +1,10 @@
 package haennihaesseo.sandoll.domain.letter.entity;
 
-import haennihaesseo.sandoll.domain.font.entity.Font;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 @Entity
 @Getter
