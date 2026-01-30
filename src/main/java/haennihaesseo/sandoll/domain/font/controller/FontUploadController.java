@@ -4,9 +4,8 @@ import haennihaesseo.sandoll.domain.font.entity.enums.Bone;
 import haennihaesseo.sandoll.domain.font.entity.enums.Distance;
 import haennihaesseo.sandoll.domain.font.entity.enums.FontType;
 import haennihaesseo.sandoll.domain.font.entity.enums.Situation;
-import haennihaesseo.sandoll.domain.font.entity.enums.Target;
+import haennihaesseo.sandoll.domain.font.entity.enums.Writer;
 import haennihaesseo.sandoll.domain.font.service.FontUploadService;
-import haennihaesseo.sandoll.domain.letter.dto.response.VoiceSaveResponse;
 import haennihaesseo.sandoll.global.response.ApiResponse;
 import haennihaesseo.sandoll.global.status.SuccessStatus;
 import io.swagger.v3.oas.annotations.Operation;
@@ -48,13 +47,13 @@ public class FontUploadController {
       @RequestParam(value = "situation", required = false) Situation situation,
       @RequestParam(value = "distance", required = false) Distance distance,
       @RequestParam(value = "bone", required = false) Bone bone,
-      @RequestParam(value = "target", required = false) Target target
+      @RequestParam(value = "writer", required = false) Writer writer
 
 
   ) {
     int uploadCount = 0;
     if(fontType.equals(FontType.VOICE)) uploadCount = fontUploadService.voiceFontUploadService(fonts, fontNames, directory);
-    else if(fontType.equals(FontType.CONTEXT)) uploadCount = fontUploadService.contextFontUploadService(fonts, fontNames, directory, situation, distance, bone, target);
+    else if(fontType.equals(FontType.CONTEXT)) uploadCount = fontUploadService.contextFontUploadService(fonts, fontNames, directory, situation, distance, bone, writer);
 
     return ApiResponse.success(SuccessStatus.CREATED, uploadCount + "개의 폰트가 업로드되었습니다.");
 

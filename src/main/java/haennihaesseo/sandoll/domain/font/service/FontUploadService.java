@@ -6,7 +6,7 @@ import haennihaesseo.sandoll.domain.font.entity.enums.Bone;
 import haennihaesseo.sandoll.domain.font.entity.enums.Distance;
 import haennihaesseo.sandoll.domain.font.entity.enums.FontType;
 import haennihaesseo.sandoll.domain.font.entity.enums.Situation;
-import haennihaesseo.sandoll.domain.font.entity.enums.Target;
+import haennihaesseo.sandoll.domain.font.entity.enums.Writer;
 import haennihaesseo.sandoll.domain.font.repository.FontRepository;
 import haennihaesseo.sandoll.global.exception.GlobalException;
 import haennihaesseo.sandoll.global.infra.AwsS3Client;
@@ -58,7 +58,7 @@ public class FontUploadService {
       Situation situation,
       Distance distance,
       Bone bone,
-      Target target) {
+      Writer writer) {
     if (fonts.size() != fontNames.size()) {
       throw new GlobalException(ErrorStatus.BAD_REQUEST);
     }
@@ -75,7 +75,7 @@ public class FontUploadService {
           .situationKeyword(situation)
           .distanceKeyword(distance)
           .boneKeyword(bone)
-          .targetKeyword(target)
+          .targetKeyword(writer)
           .build());
 
       uploadCount++;
