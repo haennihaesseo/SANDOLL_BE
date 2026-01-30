@@ -37,6 +37,9 @@ public class LetterSaveController {
         return ApiResponse.success(LetterSuccessStatus.SUCCESS_501, response);
     }
 
+    @Operation(
+            summary = "[5.2] 작성한 편지에 비밀번호 설정"
+    )
     @PatchMapping("/password")
     public ResponseEntity<ApiResponse<Void>> updatePassword(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
@@ -47,6 +50,9 @@ public class LetterSaveController {
         return ApiResponse.success(LetterSuccessStatus.SUCCESS_502);
     }
 
+    @Operation(
+            summary = "[5.3] 작성한 편지 조회"
+    )
     @GetMapping("/share")
     public ResponseEntity<ApiResponse<LetterDetailResponse>> viewShareLetter(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
