@@ -139,27 +139,18 @@ public class LetterSaveService {
      */
     @Transactional
     public void updateLetterPasswordBySecretLetterKey(Long userId, String secretLetterKey, String password) {
-        Long letterId = 0L;
-        try {
-            letterId = aesUtil.decrypt(secretLetterKey);
-        } catch (Exception e){
-            log.warn("공유키 복호화 중 예외 발생: secretLetterKey = {}", secretLetterKey, e);
-            throw new LetterException(LetterErrorStatus.LETTER_DECRYPT_FAILED);
-        }
-
-        Letter letter = letterRepository.findById(letterId)
-                .orElseThrow(() -> new LetterException(LetterErrorStatus.LETTER_NOT_FOUND));
-
-        if (!letter.getSender().getUserId().equals(userId))
-            throw new LetterException(LetterErrorStatus.NOT_LETTER_OWNER);
-
+        Letter letter = decryptLetter(userId, secretLetterKey);
         letter.setPassword(passwordEncoder.encode(password));
         letterRepository.save(letter);
     }
 
     public LetterDetailResponse viewLetterBehindShare(Long userId, String secretLetterKey) {
-        Long letterId = 0L;
+        Long letterId = decryptLetter(userId, secretLetterKey).getLetterId();
+        return letterDetailService.getLetterDetails(letterId);
+    }
 
+    private Letter decryptLetter(Long userId, String secretLetterKey) {
+        Long letterId;
         try {
             letterId = aesUtil.decrypt(secretLetterKey);
         } catch (Exception e){
@@ -174,7 +165,6 @@ public class LetterSaveService {
         if (!letter.getSender().getUserId().equals(userId))
             throw new LetterException(LetterErrorStatus.NOT_LETTER_OWNER);
 
-        return letterDetailService.getLetterDetails(letterId);
+        return letter;
     }
-
 }
