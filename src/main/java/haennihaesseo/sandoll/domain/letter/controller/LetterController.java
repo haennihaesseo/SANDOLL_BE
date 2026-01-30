@@ -1,5 +1,6 @@
 package haennihaesseo.sandoll.domain.letter.controller;
 
+import haennihaesseo.sandoll.domain.deco.service.BgmService;
 import haennihaesseo.sandoll.domain.letter.dto.request.LetterInfoRequest;
 import haennihaesseo.sandoll.domain.letter.dto.response.WritingLetterContentResponse;
 import haennihaesseo.sandoll.domain.letter.dto.response.VoiceAnalysisResponse;
@@ -33,6 +34,7 @@ public class LetterController {
 
   private final LetterService letterService;
   private final LetterVoiceService letterVoiceService;
+  private final BgmService bgmService;
 
   @Operation(summary = "[3.1] 녹음 파일 저장 및 STT 편지 내용 조회, 편지 작성 키 발급")
   @PostMapping(value = "/voice", consumes = "multipart/form-data")
@@ -63,8 +65,9 @@ public class LetterController {
   public ResponseEntity<ApiResponse<VoiceAnalysisResponse>> analyzeVoice(
       @RequestHeader("letterId") String letterId
   ) {
+    bgmService.createBgmsByLetter(letterId);
     VoiceAnalysisResponse response = letterVoiceService.analyzeVoice(letterId);
-    //TODO : 문맥 분석 및 BGM 설정 추가
+    //TODO : 문맥 분석
     return ApiResponse.success(LetterSuccessStatus.SUCCESS_303, response);
   }
 
