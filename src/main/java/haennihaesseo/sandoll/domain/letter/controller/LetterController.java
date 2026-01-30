@@ -64,8 +64,8 @@ public class LetterController {
   public ResponseEntity<ApiResponse<VoiceAnalysisResponse>> analyzeVoice(
       @RequestHeader("letterId") String letterId
   ) {
-    VoiceAnalysisResponse response = letterVoiceService.analyzeVoice(letterId);
     bgmService.createBgmsByLetter(letterId);
+    VoiceAnalysisResponse response = letterVoiceService.analyzeVoice(letterId);
     return ApiResponse.success(LetterSuccessStatus.SUCCESS_303, response);
   }
 }
