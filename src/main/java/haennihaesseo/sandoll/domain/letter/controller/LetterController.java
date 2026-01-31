@@ -3,6 +3,7 @@ package haennihaesseo.sandoll.domain.letter.controller;
 import haennihaesseo.sandoll.domain.letter.dto.request.LetterInfoRequest;
 import haennihaesseo.sandoll.domain.letter.dto.response.VoiceAnalysisResponse;
 import haennihaesseo.sandoll.domain.letter.dto.response.VoiceSaveResponse;
+import haennihaesseo.sandoll.domain.letter.service.LetterContextService;
 import haennihaesseo.sandoll.domain.letter.service.LetterService;
 import haennihaesseo.sandoll.domain.letter.service.LetterVoiceService;
 import haennihaesseo.sandoll.domain.letter.status.LetterSuccessStatus;
@@ -32,6 +33,7 @@ public class LetterController {
 
   private final LetterService letterService;
   private final LetterVoiceService letterVoiceService;
+  private final LetterContextService letterContextService;
 
   @Operation(summary = "[3.1] 녹음 파일 저장 및 STT 편지 내용 조회, 편지 작성 키 발급")
   @PostMapping(value = "/voice", consumes = "multipart/form-data")
@@ -62,6 +64,7 @@ public class LetterController {
   public ResponseEntity<ApiResponse<VoiceAnalysisResponse>> analyzeVoice(
       @RequestHeader("letterId") String letterId
   ) {
+    letterContextService.contextAnalyze(letterId);
     VoiceAnalysisResponse response = letterVoiceService.analyzeVoice(letterId);
     return ApiResponse.success(LetterSuccessStatus.SUCCESS_303, response);
   }

@@ -1,5 +1,6 @@
 package haennihaesseo.sandoll.domain.letter.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import haennihaesseo.sandoll.domain.font.service.FontContextRecommendService;
 import haennihaesseo.sandoll.domain.letter.cache.CachedLetter;
 import haennihaesseo.sandoll.domain.letter.cache.CachedLetterRepository;
@@ -10,13 +11,11 @@ import haennihaesseo.sandoll.global.infra.python.dto.ContextAnalysisRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import reactor.core.scheduler.Schedulers;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class LetterContextService {
-    private final LetterService letterService;
     private final CachedLetterRepository cachedLetterRepository;
     private final PythonAnalysisClient pythonAnalysisClient;
     private final FontContextRecommendService fontContextRecommendService;
@@ -32,10 +31,12 @@ public class LetterContextService {
                 .subscribe(event -> {
                     if ("analyze".equals(event.getStep())) {
                         // 분석 결과 처리
-                        // 1. 바탕으로 폰트 추천 알고리즘 구축 FontRecommendService
-                        // 2. 해당 폰트 캐시에 저장
+                        JsonNode analysis = event.getData().get("analysis");
+                        // 1. 바탕으로 폰트 추천 알고리즘 구축 FontRecommendService 및 캐시에 저장
+                        fontContextRecommendService.saveContextFontsInLetter(letterId, analysis);
                     } else if ("done".equals(event.getStep())) {
                         // BGM 결과 처리
+                        JsonNode bgmList = event.getData().get("bgmList");
                         // 1. bgm 결과 redis에 저장
                     }
                 });
