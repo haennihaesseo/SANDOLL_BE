@@ -11,6 +11,6 @@ import java.util.List;
 @Repository
 public interface WordRepository extends JpaRepository<Word, Long> {
 
-    @Query("select w from Word w where w.letter.letterId = :letterId order by w.wordOrder asc")
-    List<Word> findByLetterLetterIdOrderByWordOrderAsc(@Param("letterId") Long letterId);
+    @Query("select w from Word w where w.letter.letterId = :letterId order by w.createdAt asc, w.wordId asc")
+    List<Word> findByLetterLetterIdOrderByCreatedAtAsc(@Param("letterId") Long letterId);
 }

@@ -28,7 +28,7 @@ public class LetterDetailService {
         Letter letter = letterRepository.findById(letterId)
                 .orElseThrow(() -> new LetterException(LetterErrorStatus.LETTER_NOT_FOUND));
 
-        List<Word> words = wordRepository.findByLetterLetterIdOrderByWordOrderAsc(letterId);
+        List<Word> words = wordRepository.findByLetterLetterIdOrderByCreatedAtAsc(letterId);
 
         return letterBoxConverter.toLetterDetailResponse(letter, letter.getBgm(),
                 letter.getTemplate(), letter.getFont(),

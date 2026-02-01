@@ -1,10 +1,10 @@
 package haennihaesseo.sandoll.domain.letter.entity;
 
-import haennihaesseo.sandoll.domain.font.entity.Font;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -33,6 +33,7 @@ public class Word {
     @JoinColumn(name = "letter_id", nullable = false)
     private Letter letter;
 
-    @Column(name = "word_order", nullable = false)
-    private Double wordOrder;
+    @Column(name = "created_at", nullable = false)
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 }
