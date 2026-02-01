@@ -44,6 +44,11 @@ public class LetterVoiceService {
 
     // 추천 폰트 이름으로 캐쉬에 저장
     cachedLetter.setVoiceFonts(recommendedFonts, pythonResponse.getVoiceKeywords());
+
+    cachedLetter.setShownContextFontIds(recommendedFonts.stream()
+        .map(Font::getFontId)
+        .toList());
+
     cachedLetterRepository.save(cachedLetter);
 
     return letterConverter.toVoiceAnalysisResponse(pythonResponse.getAnalysisResult(), recommendedFonts);

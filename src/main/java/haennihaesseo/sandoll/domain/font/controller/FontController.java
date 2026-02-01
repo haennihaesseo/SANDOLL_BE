@@ -54,4 +54,16 @@ public class FontController {
     return ApiResponse.success(FontSuccessStatus.SUCCESS_306, response);
   }
 
+  @Operation(
+      summary = "[3.9] 추천 폰트 리스트 새로고침"
+  )
+  @GetMapping("/font/refresh")
+  public ResponseEntity<ApiResponse<RecommendFontResponse>> refreshRecommendFont(
+      @RequestHeader("letterId") String letterId,
+      @RequestParam(value = "source", defaultValue = "VOICE") FontType type
+  ) {
+    RecommendFontResponse response = fontService.refreshRecommendFonts(letterId, type);
+    return ApiResponse.success(FontSuccessStatus.SUCCESS_309, response);
+  }
+
 }
