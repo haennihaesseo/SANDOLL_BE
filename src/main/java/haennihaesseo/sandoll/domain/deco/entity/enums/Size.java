@@ -7,7 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum Size {
     // 기준 글자 수 변경시 변경 예정
-    LARGE(1500), MEDIUM(1000), SMALL(500);
+    LARGE(1000), MEDIUM(720), SMALL(360);
 
     private final int maxLength;
 

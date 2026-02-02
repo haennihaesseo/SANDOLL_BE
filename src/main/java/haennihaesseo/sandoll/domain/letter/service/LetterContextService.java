@@ -38,7 +38,6 @@ public class LetterContextService {
 
         // todo error 코드 추가 예정
         pythonAnalysisClient.requestContextAnalysis(request)
-                .publishOn(Schedulers.boundedElastic())
                 .subscribe(event -> {
                     if ("analyze".equals(event.getStep())) {
                         // 분석 결과 처리
