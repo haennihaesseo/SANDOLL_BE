@@ -2,6 +2,7 @@ package haennihaesseo.sandoll.global.infra.stt;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.speech.v1.*;
+import com.google.cloud.speech.v1.RecognitionConfig.AudioEncoding;
 import com.google.protobuf.ByteString;
 import haennihaesseo.sandoll.global.exception.GlobalException;
 import haennihaesseo.sandoll.global.status.ErrorStatus;
@@ -21,6 +22,7 @@ import java.util.concurrent.ExecutionException;
 public class GoogleSttClient {
 
     private static final String LANGUAGE_CODE = "ko-KR";
+    private static final long SYNC_MAX_BYTES = 1_000_000; // 1MB 이하면 짧은 시간 걸리는 모델 사용
 
     private final SpeechSettings speechSettings;
 
@@ -32,41 +34,44 @@ public class GoogleSttClient {
                     .setCredentialsProvider(() -> credentials)
                     .build();
         } catch (IOException e) {
-            throw new RuntimeException("Google Cloud 인증 파일 로드 실패", e);
+            throw new GlobalException(ErrorStatus.STT_SERVICE_ERROR);
         }
     }
 
     public SttResult transcribe(MultipartFile audioFile) {
         try {
             byte[] audioBytes = audioFile.getBytes();
-            String contentType = audioFile.getContentType();
-            RecognitionConfig.AudioEncoding encoding = getAudioEncoding(contentType);
-            int channelCount = detectOpusChannelCount(audioBytes);
+            RecognitionConfig.AudioEncoding encoding = AudioEncoding.WEBM_OPUS;
 
-            log.info("[STT] contentType={}, encoding={}, channelCount={}", contentType, encoding, channelCount);
-
-            return transcribeAudio(audioBytes, encoding, channelCount);
+            return transcribeAudio(audioBytes, encoding);
         } catch (IOException e) {
             log.error("오디오 파일 읽기 실패", e);
-            throw new RuntimeException("오디오 파일 처리 중 오류가 발생했습니다.", e);
+            throw new GlobalException(ErrorStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    private SttResult transcribeAudio(byte[] audioBytes, RecognitionConfig.AudioEncoding encoding, int channelCount) {
+    private SttResult transcribeAudio(byte[] audioBytes, RecognitionConfig.AudioEncoding encoding) {
         try (SpeechClient speechClient = SpeechClient.create(speechSettings)) {
-            RecognitionConfig config = buildConfig(encoding, channelCount);
+            RecognitionConfig config = buildConfig(encoding);
             RecognitionAudio audio = RecognitionAudio.newBuilder()
                     .setContent(ByteString.copyFrom(audioBytes))
                     .build();
 
-            LongRunningRecognizeResponse response = speechClient
-                    .longRunningRecognizeAsync(config, audio)
-                    .get();
+            List<SpeechRecognitionResult> results;
 
-            log.info("Google STT 처리 완료");
-            log.info("응답 결과: {}", response.getResultsList());
+            if (audioBytes.length <= SYNC_MAX_BYTES) {
+                log.info("짧은 오디오 감지 ({}bytes), 동기 recognize 사용", audioBytes.length);
+                RecognizeResponse response = speechClient.recognize(config, audio);
+                results = response.getResultsList();
+            } else {
+                log.info("긴 오디오 감지 ({}bytes), longRunningRecognize 사용", audioBytes.length);
+                LongRunningRecognizeResponse response = speechClient
+                        .longRunningRecognizeAsync(config, audio)
+                        .get();
+                results = response.getResultsList();
+            }
 
-            return parseResponse(response);
+            return parseResults(results);
         } catch (IOException e) {
             log.error("Google STT 처리 실패", e);
             throw new GlobalException(ErrorStatus.STT_SERVICE_ERROR);
@@ -80,44 +85,20 @@ public class GoogleSttClient {
         }
     }
 
-    private RecognitionConfig buildConfig(RecognitionConfig.AudioEncoding encoding, int channelCount) {
+    private RecognitionConfig buildConfig(RecognitionConfig.AudioEncoding encoding) {
         RecognitionConfig.Builder builder = RecognitionConfig.newBuilder()
                 .setEncoding(encoding)
                 .setLanguageCode(LANGUAGE_CODE)
                 .setEnableWordTimeOffsets(true)
                 .setEnableAutomaticPunctuation(true)
+                .setSampleRateHertz(48000) // webm 의 일반적인 샘플레이트, 현재 프론트에서 webm 만 보내므로 고정
                 .setModel("default");
-
-        if (channelCount > 0) {
-            builder.setAudioChannelCount(channelCount);
-        }
 
         return builder.build();
     }
 
-    /**
-     * WEBM/OGG Opus 파일에서 OpusHead 헤더를 찾아 채널 수를 읽음
-     * OpusHead 구조: [0-7] "OpusHead", [8] version, [9] channel count
-     */
-    private int detectOpusChannelCount(byte[] audioBytes) {
-        byte[] magic = "OpusHead".getBytes();
-        for (int i = 0; i <= audioBytes.length - magic.length - 2; i++) {
-            boolean found = true;
-            for (int j = 0; j < magic.length; j++) {
-                if (audioBytes[i + j] != magic[j]) {
-                    found = false;
-                    break;
-                }
-            }
-            if (found) {
-                return audioBytes[i + 9] & 0xFF;
-            }
-        }
-        return 0;
-    }
-
-    private SttResult parseResponse(LongRunningRecognizeResponse response) {
-        if (response.getResultsList().isEmpty()) {
+    private SttResult parseResults(List<SpeechRecognitionResult> resultsList) {
+        if (resultsList.isEmpty()) {
             return SttResult.builder()
                     .fullText("")
                     .totalDuration(0)
@@ -130,7 +111,7 @@ public class GoogleSttClient {
         int totalDuration = 0;
         double wordOrder = 0;
 
-        for (SpeechRecognitionResult result : response.getResultsList()) {
+        for (SpeechRecognitionResult result : resultsList) {
             if (result.getAlternativesCount() == 0) continue;
 
             SpeechRecognitionAlternative alternative = result.getAlternatives(0);
@@ -159,20 +140,5 @@ public class GoogleSttClient {
 
     private double toSeconds(com.google.protobuf.Duration duration) {
         return duration.getSeconds() + duration.getNanos() / 1_000_000_000.0;
-    }
-
-    private RecognitionConfig.AudioEncoding getAudioEncoding(String contentType) {
-        if (contentType == null) {
-            return RecognitionConfig.AudioEncoding.ENCODING_UNSPECIFIED;
-        }
-        return switch (contentType.toLowerCase()) {
-            case "audio/wav", "audio/wave", "audio/x-wav" -> RecognitionConfig.AudioEncoding.LINEAR16;
-            case "audio/flac" -> RecognitionConfig.AudioEncoding.FLAC;
-            case "audio/mp3", "audio/mpeg" -> RecognitionConfig.AudioEncoding.MP3;
-            case "audio/ogg" -> RecognitionConfig.AudioEncoding.OGG_OPUS;
-            case "audio/webm" -> RecognitionConfig.AudioEncoding.WEBM_OPUS;
-            case "audio/amr" -> RecognitionConfig.AudioEncoding.AMR;
-            default -> RecognitionConfig.AudioEncoding.ENCODING_UNSPECIFIED;
-        };
     }
 }
