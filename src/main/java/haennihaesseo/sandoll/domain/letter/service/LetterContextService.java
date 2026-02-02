@@ -3,7 +3,9 @@ package haennihaesseo.sandoll.domain.letter.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import haennihaesseo.sandoll.domain.deco.dto.response.BgmsResponse;
+import haennihaesseo.sandoll.domain.deco.exception.DecoException;
 import haennihaesseo.sandoll.domain.deco.service.BgmService;
+import haennihaesseo.sandoll.domain.deco.status.DecoErrorStatus;
 import haennihaesseo.sandoll.domain.font.service.FontContextRecommendService;
 import haennihaesseo.sandoll.domain.letter.cache.CachedLetter;
 import haennihaesseo.sandoll.domain.letter.cache.CachedLetterRepository;
@@ -16,7 +18,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.scheduler.Schedulers;
+import reactor.util.retry.Retry;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +42,19 @@ public class LetterContextService {
 
         // todo error 코드 추가 예정
         pythonAnalysisClient.requestContextAnalysis(request)
-                .subscribe(event -> {
+                .publishOn(Schedulers.boundedElastic())
+                .doOnNext(event -> {
+
+                    if ("error".equals(event.getStep())) {
+                        String errorType = event.getErrorType();
+                        String message = event.getMessage();
+
+                        if (errorType.equals("ANALYSIS_FAILED"))
+                            throw new LetterException(LetterErrorStatus.LETTER_ANALYSIS_FAILED);
+                        if (errorType.equals("BGM_GENERATION_FAILED"))
+                            throw new DecoException(DecoErrorStatus.BGM_GENERATION_FAILED);
+                    }
+
                     if ("analyze".equals(event.getStep())) {
                         // 분석 결과 처리
                         JsonNode analysis = event.getData().get("analysis");
@@ -57,6 +73,10 @@ public class LetterContextService {
                             throw new RuntimeException(e);
                         }
                     }
-                });
+                })
+                .retryWhen(Retry.backoff(3, Duration.ofSeconds(1))
+                        .filter(e -> e instanceof LetterException)
+                )
+                .subscribe();
     }
 }

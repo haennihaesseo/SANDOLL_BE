@@ -6,5 +6,7 @@ import lombok.Data;
 @Data
 public class BgmStepEvent {
     private String step;
-    private JsonNode data;  // 또는 Map<String, Object>
+    private JsonNode data;
+    private String errorType;  // 추가
+    private String message;
 }

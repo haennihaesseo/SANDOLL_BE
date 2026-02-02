@@ -22,7 +22,8 @@ public enum LetterErrorStatus implements BaseErrorStatus {
     LETTER_DECRYPT_FAILED(HttpStatus.BAD_REQUEST, "LETTER_DECRYPT_FAILED", "편지 링크가 잘못되었습니다."),
 
     CANNOT_SAVE_OWN_LETTER(HttpStatus.BAD_REQUEST, "CANNOT_SAVE_OWN_LETTER", "자신의 편지는 보관함에 저장할 수 없습니다."),
-    ALREADY_SAVE_LETTER(HttpStatus.BAD_REQUEST, "ALREADY_SAVE_LETTER", "이미 보관함에 저장한 편지입니다.")
+    ALREADY_SAVE_LETTER(HttpStatus.BAD_REQUEST, "ALREADY_SAVE_LETTER", "이미 보관함에 저장한 편지입니다."),
+    LETTER_ANALYSIS_FAILED(HttpStatus.BAD_REQUEST, "LETTER_ANALYSIS_FAILED", "편지 분석에 실패했습니다.")
     ;
 
     private final HttpStatus httpStatus;

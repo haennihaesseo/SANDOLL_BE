@@ -73,6 +73,9 @@ public class LetterController {
   }
 
 
+  @Operation(
+          summary = "[3.5] 전체 편지 내용 조회"
+  )
   @GetMapping("/content")
   public ResponseEntity<ApiResponse<WritingLetterContentResponse>> getWritingLetterContent(
       @RequestHeader("letterId") String letterId
