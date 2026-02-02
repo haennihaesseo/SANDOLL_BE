@@ -1,6 +1,7 @@
 package haennihaesseo.sandoll.domain.letter.cache;
 
 import haennihaesseo.sandoll.domain.deco.dto.response.BgmsResponse;
+import haennihaesseo.sandoll.domain.font.dto.response.ContextFontResponse;
 import haennihaesseo.sandoll.domain.font.entity.Font;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,8 +34,8 @@ public class CachedLetter implements Serializable {
     private String title;
     private String sender;
 
-    private List<Long> contextFontIds;
-    private List<String> contextFontKeywords;
+    private List<ContextFontResponse> contextFonts;
+    
     private List<Long> voiceFontIds;
     private List<String> voiceFontKeywords;
 
@@ -84,6 +85,10 @@ public class CachedLetter implements Serializable {
     public void setFont(Long fontId, String fontUrl) {
         this.fontId = fontId;
         this.fontUrl = fontUrl;
+    }
+
+    public void setContextFonts(List<ContextFontResponse> contextFonts) {
+        this.contextFonts = contextFonts;
     }
 
     public void setVoiceFonts(List<Font> fonts, List<String> keywords) {

@@ -2,6 +2,7 @@ package haennihaesseo.sandoll.domain.font.service;
 
 
 import haennihaesseo.sandoll.domain.deco.entity.enums.Size;
+import haennihaesseo.sandoll.domain.font.dto.response.ContextFontResponse;
 import haennihaesseo.sandoll.domain.font.dto.response.RecommendFontResponse;
 import haennihaesseo.sandoll.domain.font.dto.response.RefreshFontResponse;
 import haennihaesseo.sandoll.domain.font.dto.response.RefreshFontResponse.RecommendFont;
@@ -19,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -81,8 +84,19 @@ public class FontService {
     CachedLetter cachedLetter = cachedLetterRepository.findById(letterId)
         .orElseThrow(() -> new LetterException(LetterErrorStatus.LETTER_NOT_FOUND));
 
-    List<Font> contextFonts = fontRepository.findAllByFontIdIn(cachedLetter.getContextFontIds());
-    List<RecommendFont> contextResponse = fontConverter.toRecommendFontList(contextFonts, cachedLetter.getContextFontKeywords());
+    List<ContextFontResponse> contextFontResponses = cachedLetter.getContextFonts();
+    List<RecommendFont> contextResponse = contextFontResponses.stream()
+            .map(cf ->{
+              Font font = fontRepository.findById(cf.getFontId())
+                      .orElseThrow(() -> new FontException(FontErrorStatus.FONT_NOT_FOUND));
+              return new RecommendFont(
+                      font.getFontId(),
+                      font.getName(),
+                      font.getFontUrl(),
+                      cf.getKeywords()
+              );
+            })
+            .toList();
 
     List<Font> voiceFonts = fontRepository.findAllByFontIdIn(cachedLetter.getCurrentRecommendFontIds());
     List<RecommendFont> voiceResponse = fontConverter.toRecommendFontList(voiceFonts, cachedLetter.getVoiceFontKeywords());
