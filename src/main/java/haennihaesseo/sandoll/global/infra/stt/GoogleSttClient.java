@@ -42,20 +42,17 @@ public class GoogleSttClient {
             byte[] audioBytes = audioFile.getBytes();
             String contentType = audioFile.getContentType();
             RecognitionConfig.AudioEncoding encoding = AudioEncoding.WEBM_OPUS;
-            int channelCount = detectOpusChannelCount(audioBytes);
 
-            log.info("[STT] contentType={}, encoding={}, channelCount={}", contentType, encoding, channelCount);
-
-            return transcribeAudio(audioBytes, encoding, channelCount);
+            return transcribeAudio(audioBytes, encoding);
         } catch (IOException e) {
             log.error("오디오 파일 읽기 실패", e);
             throw new RuntimeException("오디오 파일 처리 중 오류가 발생했습니다.", e);
         }
     }
 
-    private SttResult transcribeAudio(byte[] audioBytes, RecognitionConfig.AudioEncoding encoding, int channelCount) {
+    private SttResult transcribeAudio(byte[] audioBytes, RecognitionConfig.AudioEncoding encoding) {
         try (SpeechClient speechClient = SpeechClient.create(speechSettings)) {
-            RecognitionConfig config = buildConfig(encoding, channelCount);
+            RecognitionConfig config = buildConfig(encoding);
             RecognitionAudio audio = RecognitionAudio.newBuilder()
                     .setContent(ByteString.copyFrom(audioBytes))
                     .build();
@@ -78,7 +75,7 @@ public class GoogleSttClient {
         }
     }
 
-    private RecognitionConfig buildConfig(RecognitionConfig.AudioEncoding encoding, int channelCount) {
+    private RecognitionConfig buildConfig(RecognitionConfig.AudioEncoding encoding) {
         RecognitionConfig.Builder builder = RecognitionConfig.newBuilder()
                 .setEncoding(encoding)
                 .setLanguageCode(LANGUAGE_CODE)
@@ -88,27 +85,6 @@ public class GoogleSttClient {
                 .setModel("default");
 
         return builder.build();
-    }
-
-    /**
-     * WEBM/OGG Opus 파일에서 OpusHead 헤더를 찾아 채널 수를 읽음
-     * OpusHead 구조: [0-7] "OpusHead", [8] version, [9] channel count
-     */
-    private int detectOpusChannelCount(byte[] audioBytes) {
-        byte[] magic = "OpusHead".getBytes();
-        for (int i = 0; i <= audioBytes.length - magic.length - 2; i++) {
-            boolean found = true;
-            for (int j = 0; j < magic.length; j++) {
-                if (audioBytes[i + j] != magic[j]) {
-                    found = false;
-                    break;
-                }
-            }
-            if (found) {
-                return audioBytes[i + 9] & 0xFF;
-            }
-        }
-        return 0;
     }
 
     private SttResult parseResponse(LongRunningRecognizeResponse response) {
