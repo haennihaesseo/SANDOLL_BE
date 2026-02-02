@@ -12,7 +12,6 @@ import org.springframework.data.redis.core.TimeToLive;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Getter
@@ -34,10 +33,17 @@ public class CachedLetter implements Serializable {
     private String title;
     private String sender;
 
-    private String contextFontIds;
-    private String contextKeywords;
-    private String voiceFontIds;
-    private String voiceFontKeywords;
+    private List<Long> contextFontIds;
+    private List<String> contextFontKeywords;
+    private List<Long> voiceFontIds;
+    private List<String> voiceFontKeywords;
+
+    @Builder.Default
+    private List<Long> shownVoiceFontIds = new ArrayList<>();
+
+    @Builder.Default
+    private List<Long> currentRecommendFontIds = new ArrayList<>();
+
 
     private Long fontId;
     private String fontUrl;
@@ -85,11 +91,19 @@ public class CachedLetter implements Serializable {
         for (Font font : fonts) {
             fontIds.add(font.getFontId().toString());
         }
-        this.voiceFontIds = String.join(",", fontIds);
-        this.voiceFontKeywords = String.join(",", keywords);
+        this.voiceFontIds = fonts.stream().map(Font::getFontId).toList();
+        this.voiceFontKeywords = keywords;
     }
 
     public void setTemplateUrl(String templateUrl) {
         this.templateUrl = templateUrl;
+    }
+
+    public void setCurrentRecommendFontIds(List<Long> ids) {
+        this.currentRecommendFontIds = ids;
+    }
+
+    public void setShownVoiceFontIds(List<Long> ids) {
+        this.shownVoiceFontIds = ids;
     }
 }

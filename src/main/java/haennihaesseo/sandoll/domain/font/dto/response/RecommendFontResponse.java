@@ -1,6 +1,6 @@
 package haennihaesseo.sandoll.domain.font.dto.response;
 
-import haennihaesseo.sandoll.domain.font.entity.enums.FontType;
+import haennihaesseo.sandoll.domain.font.dto.response.RefreshFontResponse.RecommendFont;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,10 +10,6 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 public class RecommendFontResponse {
-  private FontType type;
-  private List<WritingRecommendFont> fonts;
-
-  @Builder
-  public record WritingRecommendFont(Long fontId, String name, String fontUrl, List<String> keywords) {}
-
+  List<RecommendFont> voiceFonts;
+  List<RecommendFont> contextFonts;
 }

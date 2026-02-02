@@ -2,9 +2,9 @@ package haennihaesseo.sandoll.domain.font.controller;
 
 import haennihaesseo.sandoll.domain.font.dto.request.FontSettingRequest;
 import haennihaesseo.sandoll.domain.font.dto.response.RecommendFontResponse;
+import haennihaesseo.sandoll.domain.font.dto.response.RefreshFontResponse;
 import haennihaesseo.sandoll.domain.font.service.FontService;
 import haennihaesseo.sandoll.domain.font.status.FontSuccessStatus;
-import haennihaesseo.sandoll.domain.letter.status.LetterSuccessStatus;
 import haennihaesseo.sandoll.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,9 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import haennihaesseo.sandoll.domain.font.entity.enums.FontType;
 
 @Tag(name = "Font Setting", description = "폰트 설정 및 추천 API")
 @RestController
@@ -47,11 +45,21 @@ public class FontController {
   )
   @GetMapping("/font")
   public ResponseEntity<ApiResponse<RecommendFontResponse>> getRecommendFont(
-      @RequestHeader("letterId") String letterId,
-      @RequestParam(value = "source", defaultValue = "VOICE") FontType type
+      @RequestHeader("letterId") String letterId
   ) {
-    RecommendFontResponse response = fontService.getRecommendFonts(letterId, type);
+    RecommendFontResponse response = fontService.getRecommendFonts(letterId);
     return ApiResponse.success(FontSuccessStatus.SUCCESS_306, response);
+  }
+
+  @Operation(
+      summary = "[3.9] 보이스 폰트 리스트 새로고침"
+  )
+  @PostMapping("/font/refresh")
+  public ResponseEntity<ApiResponse<RefreshFontResponse>> refreshRecommendFont(
+      @RequestHeader("letterId") String letterId
+  ) {
+    RefreshFontResponse response = fontService.refreshRecommendFonts(letterId);
+    return ApiResponse.success(FontSuccessStatus.SUCCESS_309, response);
   }
 
 }

@@ -27,6 +27,8 @@ public class LetterVoiceService {
   private final LetterConverter letterConverter;
 
   public VoiceAnalysisResponse analyzeVoice(String letterId) {
+    //TODO: 이미 분석하고 있거나 분석된 경우 재분석 막기
+
     // Redis에서 CachedLetter 조회
     CachedLetter cachedLetter = cachedLetterRepository.findById(letterId)
         .orElseThrow(() -> new LetterException(LetterErrorStatus.LETTER_NOT_FOUND));
@@ -42,8 +44,19 @@ public class LetterVoiceService {
     // 추천 폰트 정보 이름으로 매칭
     List<Font> recommendedFonts = fontRepository.findByNameIn(pythonResponse.getRecommendedFonts());
 
-    // 추천 폰트 이름으로 캐쉬에 저장
+    // 분석된 폰트 결과 저장
     cachedLetter.setVoiceFonts(recommendedFonts, pythonResponse.getVoiceKeywords());
+
+    // 앞에 3개 폰트만 추천으로 설정
+    if (recommendedFonts.size() > 3) {
+      recommendedFonts = recommendedFonts.subList(0, 3);
+    }
+
+    // 현재 추천된 폰트 정보 캐쉬에 저장
+    cachedLetter.setCurrentRecommendFontIds(recommendedFonts.stream().map(Font::getFontId).toList());
+    // shown 폰트 업데이트
+    cachedLetter.setShownVoiceFontIds(recommendedFonts.stream().map(Font::getFontId).toList());
+
     cachedLetterRepository.save(cachedLetter);
 
     return letterConverter.toVoiceAnalysisResponse(pythonResponse.getAnalysisResult(), recommendedFonts);

@@ -41,17 +41,20 @@ public class GoogleSttClient {
             byte[] audioBytes = audioFile.getBytes();
             String contentType = audioFile.getContentType();
             RecognitionConfig.AudioEncoding encoding = getAudioEncoding(contentType);
+            int channelCount = detectOpusChannelCount(audioBytes);
 
-            return transcribeAudio(audioBytes, encoding);
+            log.info("[STT] contentType={}, encoding={}, channelCount={}", contentType, encoding, channelCount);
+
+            return transcribeAudio(audioBytes, encoding, channelCount);
         } catch (IOException e) {
             log.error("오디오 파일 읽기 실패", e);
             throw new RuntimeException("오디오 파일 처리 중 오류가 발생했습니다.", e);
         }
     }
 
-    private SttResult transcribeAudio(byte[] audioBytes, RecognitionConfig.AudioEncoding encoding) {
+    private SttResult transcribeAudio(byte[] audioBytes, RecognitionConfig.AudioEncoding encoding, int channelCount) {
         try (SpeechClient speechClient = SpeechClient.create(speechSettings)) {
-            RecognitionConfig config = buildConfig(encoding);
+            RecognitionConfig config = buildConfig(encoding, channelCount);
             RecognitionAudio audio = RecognitionAudio.newBuilder()
                     .setContent(ByteString.copyFrom(audioBytes))
                     .build();
@@ -59,6 +62,9 @@ public class GoogleSttClient {
             LongRunningRecognizeResponse response = speechClient
                     .longRunningRecognizeAsync(config, audio)
                     .get();
+
+            log.info("Google STT 처리 완료");
+            log.info("응답 결과: {}", response.getResultsList());
 
             return parseResponse(response);
         } catch (IOException e) {
@@ -74,17 +80,40 @@ public class GoogleSttClient {
         }
     }
 
-    // 인코딩 하는 부분은 프론트 녹음 방식에 따라 추후 수정 필요, 현재는 WAV 파일로 테스트
-    private RecognitionConfig buildConfig(RecognitionConfig.AudioEncoding encoding) {
+    private RecognitionConfig buildConfig(RecognitionConfig.AudioEncoding encoding, int channelCount) {
         RecognitionConfig.Builder builder = RecognitionConfig.newBuilder()
                 .setEncoding(encoding)
                 .setLanguageCode(LANGUAGE_CODE)
                 .setEnableWordTimeOffsets(true)
                 .setEnableAutomaticPunctuation(true)
-                .setModel("default")
-                .setAudioChannelCount(1);
+                .setModel("default");
+
+        if (channelCount > 0) {
+            builder.setAudioChannelCount(channelCount);
+        }
 
         return builder.build();
+    }
+
+    /**
+     * WEBM/OGG Opus 파일에서 OpusHead 헤더를 찾아 채널 수를 읽음
+     * OpusHead 구조: [0-7] "OpusHead", [8] version, [9] channel count
+     */
+    private int detectOpusChannelCount(byte[] audioBytes) {
+        byte[] magic = "OpusHead".getBytes();
+        for (int i = 0; i <= audioBytes.length - magic.length - 2; i++) {
+            boolean found = true;
+            for (int j = 0; j < magic.length; j++) {
+                if (audioBytes[i + j] != magic[j]) {
+                    found = false;
+                    break;
+                }
+            }
+            if (found) {
+                return audioBytes[i + 9] & 0xFF;
+            }
+        }
+        return 0;
     }
 
     private SttResult parseResponse(LongRunningRecognizeResponse response) {
