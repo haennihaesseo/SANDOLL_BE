@@ -25,10 +25,18 @@ public class LetterDetailService {
     private final LetterBoxConverter letterBoxConverter;
 
     public LetterDetailResponse getLetterDetails(Long letterId) {
-        Letter letter = letterRepository.findById(letterId)
+        Letter letter = letterRepository.findWithAllDetails(letterId)
                 .orElseThrow(() -> new LetterException(LetterErrorStatus.LETTER_NOT_FOUND));
 
         List<Word> words = wordRepository.findByLetterLetterIdOrderByCreatedAtAsc(letterId);
+
+        return letterBoxConverter.toLetterDetailResponse(letter, letter.getBgm(),
+                letter.getTemplate(), letter.getFont(),
+                letter.getVoice(), words);
+    }
+
+    public LetterDetailResponse getLetterDetails(Letter letter) {
+        List<Word> words = wordRepository.findByLetterLetterIdOrderByCreatedAtAsc(letter.getLetterId());
 
         return letterBoxConverter.toLetterDetailResponse(letter, letter.getBgm(),
                 letter.getTemplate(), letter.getFont(),

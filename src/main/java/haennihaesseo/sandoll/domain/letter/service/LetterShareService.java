@@ -58,7 +58,8 @@ public class LetterShareService {
      */
     public LetterDetailResponse getLetterDetailsByLink(String secretLetterKey, String password) {
         Long letterId = aesUtil.decrypt(secretLetterKey);
-        Letter letter = letterRepository.findById(letterId)
+
+        Letter letter = letterRepository.findWithAllDetails(letterId)
                 .orElseThrow(() -> new LetterException(LetterErrorStatus.LETTER_NOT_FOUND));
 
         if (letter.getPassword() != null) {
@@ -67,7 +68,7 @@ public class LetterShareService {
             if (!passwordEncoder.matches(password, letter.getPassword()))
                 throw new GlobalException(LetterErrorStatus.LETTER_WRONG_PASSWORD);
         }
-        return letterDetailService.getLetterDetails(letterId);
+        return letterDetailService.getLetterDetails(letter);
     }
 
     /**

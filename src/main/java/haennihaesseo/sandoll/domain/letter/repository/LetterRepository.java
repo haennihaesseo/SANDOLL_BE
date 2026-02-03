@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface LetterRepository extends JpaRepository<Letter, Long> {
@@ -20,4 +21,7 @@ public interface LetterRepository extends JpaRepository<Letter, Long> {
     List<Long> findIdLetterIdBySenderUserIdOrderByCreatedAtAsc(@Param("userId") Long userId, @Param("letterStatus") LetterStatus letterStatus);
 
     boolean existsByLetterIdAndSenderUserId(Long letterId, Long userId);
+
+    @Query("select l from Letter l join fetch l.font join fetch l.template join fetch l.voice left join fetch l.bgm where l.letterId = :letterId")
+    Optional<Letter> findWithAllDetails(@Param("letterId") Long letterId);
 }
