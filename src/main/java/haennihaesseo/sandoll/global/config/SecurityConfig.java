@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import haennihaesseo.sandoll.global.auth.handler.OAuthLoginFailureHandler;
 import haennihaesseo.sandoll.global.auth.handler.OAuthLoginSuccessHandler;
 import haennihaesseo.sandoll.global.auth.util.JwtFilter;
+import haennihaesseo.sandoll.global.ratelimit.RateLimitFilter;
 import haennihaesseo.sandoll.global.response.ApiResponse;
 import haennihaesseo.sandoll.global.status.ErrorStatus;
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 public class SecurityConfig {
   private final JwtFilter jwtFilter;
+  private final RateLimitFilter rateLimitFilter;
   private final OAuthLoginSuccessHandler oAuthLoginSuccessHandler;
   private final OAuthLoginFailureHandler oAuthLoginFailureHandler;
   private final ObjectMapper objectMapper;
@@ -114,7 +116,8 @@ public class SecurityConfig {
             .successHandler(oAuthLoginSuccessHandler)
             .failureHandler(oAuthLoginFailureHandler)
         )
-        .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+        .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+        .addFilterBefore(rateLimitFilter, JwtFilter.class);
 
     return httpSecurity.build();
   }
