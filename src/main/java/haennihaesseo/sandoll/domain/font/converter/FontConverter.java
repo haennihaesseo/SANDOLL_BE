@@ -1,11 +1,15 @@
 package haennihaesseo.sandoll.domain.font.converter;
 
+import haennihaesseo.sandoll.domain.font.dto.response.ContextFontResponse;
 import haennihaesseo.sandoll.domain.font.dto.response.RecommendFontResponse;
 import haennihaesseo.sandoll.domain.font.dto.response.RefreshFontResponse;
 import haennihaesseo.sandoll.domain.font.dto.response.RefreshFontResponse.RecommendFont;
 import haennihaesseo.sandoll.domain.font.entity.Font;
 import haennihaesseo.sandoll.domain.font.entity.enums.FontType;
 import java.util.List;
+
+import haennihaesseo.sandoll.domain.font.exception.FontException;
+import haennihaesseo.sandoll.domain.font.status.FontErrorStatus;
 import org.springframework.stereotype.Component;
 
 @Component
