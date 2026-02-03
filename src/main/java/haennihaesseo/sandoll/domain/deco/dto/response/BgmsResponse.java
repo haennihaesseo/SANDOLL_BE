@@ -12,5 +12,5 @@ public class BgmsResponse {
     private List<BgmDto> bgms;
 
     @Builder
-    public record BgmDto(Long bgmId, String bgmUrl, List<String> keyword, String name) {};
+    public record BgmDto(Long bgmId, String bgmUrl, List<String> keyword, String name, Double bgmSize) {};
 }
