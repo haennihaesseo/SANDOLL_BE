@@ -23,10 +23,10 @@ public class Word {
     @Column(name = "word", nullable = false)
     private String word;
 
-    @Column(name = "start_time", nullable = false)
+    @Column(name = "start_time", nullable = true)
     private Double startTime;
 
-    @Column(name = "end_time", nullable = false)
+    @Column(name = "end_time", nullable = true)
     private Double endTime;
 
     @ManyToOne(fetch = FetchType.LAZY)

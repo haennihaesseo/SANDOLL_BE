@@ -44,9 +44,10 @@ public class BgmController {
     @PostMapping("/select")
     public ResponseEntity<ApiResponse<Void>> selectBgms(
             @RequestHeader(name = "letterId") String letterId,
-            @RequestParam(name = "bgmId", required = false) Long bgmId
+            @RequestParam(name = "bgmId", required = false) Long bgmId,
+            @RequestParam(name = "bgmSize", required = false) Double bgmSize
     ){
-        bgmService.saveBgmOnLetter(letterId, bgmId);
+        bgmService.saveBgmOnLetter(letterId, bgmId, bgmSize);
         return ApiResponse.success(DecoSuccessStatus.SUCCESS_405);
     }
 }

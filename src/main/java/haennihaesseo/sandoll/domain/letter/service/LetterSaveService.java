@@ -95,6 +95,7 @@ public class LetterSaveService {
                     .name(cachedLetter.getBgmDto().name())
                     .keyword(String.join(",", cachedLetter.getBgmDto().keyword()))
                     .bgmUrl(cachedLetter.getBgmDto().bgmUrl())
+                    .bgmSize(cachedLetter.getBgmDto().bgmSize())
                     .build();
             bgmRepository.save(bgm);
         }

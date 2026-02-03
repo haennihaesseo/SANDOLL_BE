@@ -26,4 +26,7 @@ public class Bgm {
 
     @Column(name = "name", nullable = false)
     private String name;
+
+    @Column(name = "bgm_size", nullable = false)
+    private Double bgmSize;
 }

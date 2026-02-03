@@ -33,6 +33,7 @@ public class LetterBoxConverter {
         return LetterDetailResponse.BgmInfo.builder()
                 .bgmId(bgm.getBgmId())
                 .bgmUrl(bgm.getBgmUrl())
+                .bgmSize(bgm.getBgmSize())
                 .build();
     }
 

@@ -100,7 +100,7 @@ public class BgmService {
      * @param letterId
      * @param bgmId
      */
-    public void saveBgmOnLetter(String letterId, Long bgmId) {
+    public void saveBgmOnLetter(String letterId, Long bgmId, Double bgmSize) {
         CachedLetter cachedLetter = cachedLetterRepository.findById(letterId)
                 .orElseThrow(() -> new LetterException(LetterErrorStatus.LETTER_NOT_FOUND));
 
@@ -119,8 +119,7 @@ public class BgmService {
                         .filter(dto -> dto.bgmId().equals(bgmId))
                         .findFirst()
                         .orElseThrow(() -> new DecoException(DecoErrorStatus.BGM_NOT_FOUND));
-
-                cachedLetter.setBgmDto(bgmDto);
+                cachedLetter.setBgmDto(bgmDto.withBgmSize(bgmSize));
                 cachedLetterRepository.save(cachedLetter);
 
             } catch (JsonProcessingException e) {

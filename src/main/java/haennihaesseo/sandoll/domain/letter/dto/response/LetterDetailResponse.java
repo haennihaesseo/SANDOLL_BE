@@ -21,7 +21,7 @@ public class LetterDetailResponse {
     private List<WordInfo> words;
 
     @Builder
-    public record BgmInfo(Long bgmId, String bgmUrl) {}
+    public record BgmInfo(Long bgmId, String bgmUrl, Double bgmSize) {}
     @Builder
     public record TemplateInfo(Long templateId, String templateUrl) {}
     @Builder
