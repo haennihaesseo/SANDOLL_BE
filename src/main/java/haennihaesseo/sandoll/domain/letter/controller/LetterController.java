@@ -5,6 +5,7 @@ import haennihaesseo.sandoll.domain.letter.dto.request.LetterInfoRequest;
 import haennihaesseo.sandoll.domain.letter.dto.response.WritingLetterContentResponse;
 import haennihaesseo.sandoll.domain.letter.dto.response.VoiceAnalysisResponse;
 import haennihaesseo.sandoll.domain.letter.dto.response.VoiceSaveResponse;
+import haennihaesseo.sandoll.domain.letter.service.ContentEditService;
 import haennihaesseo.sandoll.domain.letter.service.LetterContextService;
 import haennihaesseo.sandoll.domain.letter.service.LetterService;
 import haennihaesseo.sandoll.domain.letter.service.LetterVoiceService;
@@ -35,8 +36,8 @@ public class LetterController {
 
   private final LetterService letterService;
   private final LetterVoiceService letterVoiceService;
-  private final BgmService bgmService;
   private final LetterContextService letterContextService;
+  private final ContentEditService contentEditService;
 
   @Operation(summary = "[3.1] 녹음 파일 저장 및 STT 편지 내용 조회, 편지 작성 키 발급")
   @PostMapping(value = "/voice", consumes = "multipart/form-data")
@@ -55,7 +56,7 @@ public class LetterController {
       @RequestHeader("letterId") String letterId,
       @RequestBody @Valid LetterInfoRequest request
   ) {
-    letterService.inputLetterInfo(letterId, request);
+    contentEditService.inputLetterInfo(letterId, request);
 
     return ApiResponse.success(LetterSuccessStatus.SUCCESS_302);
   }

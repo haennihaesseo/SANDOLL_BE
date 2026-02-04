@@ -67,6 +67,8 @@ dependencies {
 
 	// Google Cloud Speech-to-Text
 	implementation 'com.google.cloud:google-cloud-speech:4.52.0'
+
+	implementation 'org.apache.commons:commons-text:1.11.0'
 }
 
 tasks.named('test') {
