@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -36,16 +37,11 @@ public class LetterBoxService {
     public List<ReceiveLetterResponse> getReceivedLettersByUser(Long userId, OrderStatus status) {
         userRepository.findById(userId).orElseThrow(() -> new GlobalException(ErrorStatus.USER_NOT_FOUND));
 
-        List<Long> letterIds = (status.equals(OrderStatus.LATEST))
-                ? receiverLetterRepository.findIdLetterIdByIdReceiverIdOrderByCreatedAtDesc(userId)
-                : receiverLetterRepository.findIdLetterIdByIdReceiverIdOrderByCreatedAtAsc(userId);
-
-        List<Letter> letters = letterRepository.findByLetterIdIn(letterIds);
-
-        List<Letter> lt = receiverLetterRepository.findReceivedLettersByUserIdOrderByDesc(userId);
-
-        if (letters.size() != letterIds.size())
-            throw new LetterException(LetterErrorStatus.LETTER_NOT_FOUND);
+        List<Letter> letters;
+        if (status.equals(OrderStatus.LATEST))
+            letters = receiverLetterRepository.findReceivedLettersByUserIdOrderByCreatedAtDesc(userId);
+        else
+            letters = receiverLetterRepository.findReceivedLettersByUserIdOrderByCreatedAtAsc(userId);
 
         return letters.stream()
                 .map(l -> ReceiveLetterResponse.builder()
@@ -80,16 +76,13 @@ public class LetterBoxService {
     }
 
     public List<SendLetterResponse> getSentLettersByUser(Long userId, OrderStatus status) {
-
         userRepository.findById(userId).orElseThrow(() -> new GlobalException(ErrorStatus.USER_NOT_FOUND));
 
-        List<Long> letterIds = (status.equals(OrderStatus.LATEST))
-                ? letterRepository.findIdLetterIdBySenderUserIdOrderByCreatedAtDesc(userId, LetterStatus.VISIBLE)
-                : letterRepository.findIdLetterIdBySenderUserIdOrderByCreatedAtAsc(userId, LetterStatus.VISIBLE);
-
-        List<Letter> letters = letterRepository.findByLetterIdIn(letterIds);
-        if (letters.size() != letterIds.size())
-            throw new LetterException(LetterErrorStatus.LETTER_NOT_FOUND);
+        List<Letter> letters;
+        if (status.equals(OrderStatus.LATEST))
+            letters = letterRepository.findBySenderUserIdOrderByCreatedAtDesc(userId);
+        else
+            letters = letterRepository.findBySenderUserIdOrderByCreatedAtAsc(userId);
 
         return letters.stream()
                 .map(l -> SendLetterResponse.builder()

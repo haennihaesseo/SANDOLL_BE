@@ -28,7 +28,11 @@ public interface ReceiverLetterRepository extends JpaRepository<ReceiverLetter, 
     @Query("delete from ReceiverLetter rl where rl.id.receiverId = :userId and rl.id.letterId in :letterIds")
     int deleteAllByIdReceiverIdAndIdLetterIdIn(@Param("userId") Long userId, @Param("letterIds") List<Long> letterIds);
 
-    @Query("select l from Letter l where l.letterId in " +
-            "(select from )")
-    List<Letter> findReceivedLettersByUserIdOrderByDesc(@Param("userId") Long userId);
+    @Query("select l from ReceiverLetter rl join Letter l on rl.id.letterId = l.letterId " +
+            "where rl.id.receiverId = :userId order by rl.createdAt desc")
+    List<Letter> findReceivedLettersByUserIdOrderByCreatedAtDesc(@Param("userId") Long userId);
+
+    @Query("select l from ReceiverLetter rl join Letter l on rl.id.letterId = l.letterId " +
+            "where rl.id.receiverId = :userId order by rl.createdAt asc")
+    List<Letter> findReceivedLettersByUserIdOrderByCreatedAtAsc(@Param("userId") Long userId);
 }

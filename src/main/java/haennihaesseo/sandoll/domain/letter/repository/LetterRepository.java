@@ -31,4 +31,10 @@ public interface LetterRepository extends JpaRepository<Letter, Long> {
     @Modifying
     @Query("update Letter l set l.letterStatus = :letterStatus where l.sender.userId = :userId and l.letterId in :letterIds")
     int updateLetterStatusBySenderUserIdAndLetterIdIn(@Param("letterStatus") LetterStatus letterStatus, @Param("userId") Long userId, @Param("letterIds") List<Long> letterIds);
+
+    @Query("select l from Letter l where l.sender.userId = :userId order by l.createdAt desc")
+    List<Letter> findBySenderUserIdOrderByCreatedAtDesc(@Param("userId") Long userId);
+
+    @Query("select l from Letter l where l.sender.userId = :userId order by l.createdAt asc")
+    List<Letter> findBySenderUserIdOrderByCreatedAtAsc(@Param("userId") Long userId);
 }
