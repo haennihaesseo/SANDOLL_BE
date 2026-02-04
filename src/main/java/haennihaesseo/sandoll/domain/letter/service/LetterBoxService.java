@@ -80,9 +80,9 @@ public class LetterBoxService {
 
         List<Letter> letters;
         if (status.equals(OrderStatus.LATEST))
-            letters = letterRepository.findBySenderUserIdOrderByCreatedAtDesc(userId);
+            letters = letterRepository.findBySenderUserIdAndLetterStatusOrderByCreatedAtDesc(userId, LetterStatus.VISIBLE);
         else
-            letters = letterRepository.findBySenderUserIdOrderByCreatedAtAsc(userId);
+            letters = letterRepository.findBySenderUserIdAndLetterStatusOrderByCreatedAtAsc(userId, LetterStatus.VISIBLE);
 
         return letters.stream()
                 .map(l -> SendLetterResponse.builder()

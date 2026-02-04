@@ -15,12 +15,6 @@ import java.util.Optional;
 public interface LetterRepository extends JpaRepository<Letter, Long> {
     Letter findByLetterIdAndSenderUserId(Long letterId, Long userId);
 
-    @Query("select l.letterId from Letter l where l.sender.userId = :userId and l.letterStatus = :letterStatus order by l.createdAt desc")
-    List<Long> findIdLetterIdBySenderUserIdOrderByCreatedAtDesc(@Param("userId") Long userId, @Param("letterStatus") LetterStatus letterStatus);
-
-    @Query("select l.letterId from Letter l where l.sender.userId = :userId and l.letterStatus = :letterStatus order by l.createdAt asc")
-    List<Long> findIdLetterIdBySenderUserIdOrderByCreatedAtAsc(@Param("userId") Long userId, @Param("letterStatus") LetterStatus letterStatus);
-
     boolean existsByLetterIdAndSenderUserId(Long letterId, Long userId);
 
     @Query("select l from Letter l join fetch l.font join fetch l.template join fetch l.voice left join fetch l.bgm where l.letterId = :letterId")
@@ -32,9 +26,9 @@ public interface LetterRepository extends JpaRepository<Letter, Long> {
     @Query("update Letter l set l.letterStatus = :letterStatus where l.sender.userId = :userId and l.letterId in :letterIds")
     int updateLetterStatusBySenderUserIdAndLetterIdIn(@Param("letterStatus") LetterStatus letterStatus, @Param("userId") Long userId, @Param("letterIds") List<Long> letterIds);
 
-    @Query("select l from Letter l where l.sender.userId = :userId order by l.createdAt desc")
-    List<Letter> findBySenderUserIdOrderByCreatedAtDesc(@Param("userId") Long userId);
+    @Query("select l from Letter l where l.sender.userId = :userId and l.letterStatus = :letterStatus order by l.createdAt desc")
+    List<Letter> findBySenderUserIdAndLetterStatusOrderByCreatedAtDesc(@Param("userId") Long userId, @Param("letterStatus") LetterStatus letterStatus);
 
-    @Query("select l from Letter l where l.sender.userId = :userId order by l.createdAt asc")
-    List<Letter> findBySenderUserIdOrderByCreatedAtAsc(@Param("userId") Long userId);
+    @Query("select l from Letter l where l.sender.userId = :userId and l.letterStatus = :letterStatus order by l.createdAt asc")
+    List<Letter> findBySenderUserIdAndLetterStatusOrderByCreatedAtAsc(@Param("userId") Long userId, @Param("letterStatus") LetterStatus letterStatus);
 }
