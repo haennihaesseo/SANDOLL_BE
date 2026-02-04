@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -49,6 +48,7 @@ public class Letter {
     @JoinColumn(name = "voice_id", nullable = false)
     private Voice voice;
 
+    @Setter
     @Column(name = "password", nullable = true)
     private String password;
 
@@ -56,6 +56,7 @@ public class Letter {
     @JoinColumn(name = "bgmId", nullable = true)
     private Bgm bgm;
 
+    @Setter
     @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(name = "letter_status", nullable = false)
