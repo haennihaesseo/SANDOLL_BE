@@ -1,6 +1,7 @@
 package haennihaesseo.sandoll.global.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import haennihaesseo.sandoll.global.auth.handler.CustomOAuth2AuthorizationRequestResolver;
 import haennihaesseo.sandoll.global.auth.handler.OAuthLoginFailureHandler;
 import haennihaesseo.sandoll.global.auth.handler.OAuthLoginSuccessHandler;
 import haennihaesseo.sandoll.global.auth.util.JwtFilter;
@@ -22,6 +23,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -37,6 +39,7 @@ public class SecurityConfig {
   private final OAuthLoginSuccessHandler oAuthLoginSuccessHandler;
   private final OAuthLoginFailureHandler oAuthLoginFailureHandler;
   private final ObjectMapper objectMapper;
+  private final ClientRegistrationRepository clientRegistrationRepository;
 
   @Value("${app.server-url}")
   private String serverUrl;
@@ -111,6 +114,10 @@ public class SecurityConfig {
             .anyRequest().authenticated()
         )
         .oauth2Login(oauth -> oauth
+            .authorizationEndpoint(authorization -> authorization
+                .authorizationRequestResolver(
+                    new CustomOAuth2AuthorizationRequestResolver(clientRegistrationRepository))
+            )
             .successHandler(oAuthLoginSuccessHandler)
             .failureHandler(oAuthLoginFailureHandler)
         )
