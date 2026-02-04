@@ -1,5 +1,6 @@
 package haennihaesseo.sandoll.domain.letter.repository;
 
+import haennihaesseo.sandoll.domain.letter.entity.Letter;
 import haennihaesseo.sandoll.domain.letter.entity.ReceiverLetter;
 import haennihaesseo.sandoll.domain.letter.entity.ReceiverLetterId;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -26,4 +27,8 @@ public interface ReceiverLetterRepository extends JpaRepository<ReceiverLetter, 
     @Modifying
     @Query("delete from ReceiverLetter rl where rl.id.receiverId = :userId and rl.id.letterId in :letterIds")
     int deleteAllByIdReceiverIdAndIdLetterIdIn(@Param("userId") Long userId, @Param("letterIds") List<Long> letterIds);
+
+    @Query("select l from Letter l where l.letterId in " +
+            "(select from )")
+    List<Letter> findReceivedLettersByUserIdOrderByDesc(@Param("userId") Long userId);
 }

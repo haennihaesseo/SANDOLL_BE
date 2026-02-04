@@ -41,6 +41,9 @@ public class LetterBoxService {
                 : receiverLetterRepository.findIdLetterIdByIdReceiverIdOrderByCreatedAtAsc(userId);
 
         List<Letter> letters = letterRepository.findByLetterIdIn(letterIds);
+
+        List<Letter> lt = receiverLetterRepository.findReceivedLettersByUserIdOrderByDesc(userId);
+
         if (letters.size() != letterIds.size())
             throw new LetterException(LetterErrorStatus.LETTER_NOT_FOUND);
 
