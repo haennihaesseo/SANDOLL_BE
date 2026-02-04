@@ -3,6 +3,7 @@ package haennihaesseo.sandoll.domain.letter.repository;
 import haennihaesseo.sandoll.domain.letter.entity.Letter;
 import haennihaesseo.sandoll.domain.letter.entity.LetterStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -26,4 +27,8 @@ public interface LetterRepository extends JpaRepository<Letter, Long> {
     Optional<Letter> findWithAllDetails(@Param("letterId") Long letterId);
 
     List<Letter> findByLetterIdIn(List<Long> letterIds);
+
+    @Modifying
+    @Query("update Letter l set l.letterStatus = :letterStatus where l.sender.userId = :userId and l.letterId in :letterIds")
+    int updateLetterStatusBySenderUserIdAndLetterIdIn(@Param("letterStatus") LetterStatus letterStatus, @Param("userId") Long userId, @Param("letterIds") List<Long> letterIds);
 }

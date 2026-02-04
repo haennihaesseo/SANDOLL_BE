@@ -66,20 +66,13 @@ public class LetterBoxService {
         userRepository.findById(userId).orElseThrow(() -> new GlobalException(ErrorStatus.USER_NOT_FOUND));
 
         if (letterType.equals(LetterType.RECEIVE)){
-            for (Long letterId : letterIds) {
-                ReceiverLetterId id = new ReceiverLetterId(userId, letterId);
-                if (!receiverLetterRepository.existsById(id))
-                    throw new LetterException(LetterErrorStatus.NOT_LETTER_OWNER);
-                receiverLetterRepository.deleteById(id);
-            }
+            int deletedCount = receiverLetterRepository.deleteAllByIdReceiverIdAndIdLetterIdIn(userId, letterIds);
+            if (deletedCount != letterIds.size())
+                throw new LetterException(LetterErrorStatus.NOT_LETTER_OWNER);
         } else {
-            for (Long letterId : letterIds) {
-                Letter letter = letterRepository.findByLetterIdAndSenderUserId(letterId, userId);
-                if (letter == null)
-                    throw new LetterException(LetterErrorStatus.NOT_LETTER_OWNER);
-                letter.setLetterStatus(LetterStatus.INVISIBLE);
-                letterRepository.save(letter);
-            }
+            int updatedCount = letterRepository.updateLetterStatusBySenderUserIdAndLetterIdIn(LetterStatus.INVISIBLE, userId, letterIds);
+            if (updatedCount != letterIds.size())
+                throw new LetterException(LetterErrorStatus.NOT_LETTER_OWNER);
         }
     }
 
