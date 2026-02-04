@@ -60,6 +60,7 @@ public class TemplateService {
             throw new DecoException(DecoErrorStatus.TEMPLATE_NOT_FOUND);
 
         cachedLetter.setTemplateId(setTemplate.getTemplateId());
+        cachedLetter.setTemplateUrl(setTemplate.getImageUrl());
         cachedLetterRepository.save(cachedLetter);
 
         return new TemplateImageResponse(setTemplate.getImageUrl());
