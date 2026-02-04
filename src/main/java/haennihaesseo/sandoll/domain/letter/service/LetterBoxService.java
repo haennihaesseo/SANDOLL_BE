@@ -34,7 +34,6 @@ public class LetterBoxService {
     private final LetterDetailService letterDetailService;
 
     public List<ReceiveLetterResponse> getReceivedLettersByUser(Long userId, OrderStatus status) {
-
         userRepository.findById(userId).orElseThrow(() -> new GlobalException(ErrorStatus.USER_NOT_FOUND));
 
         List<Long> letterIds = (status.equals(OrderStatus.LATEST))
@@ -67,7 +66,6 @@ public class LetterBoxService {
 
     @Transactional
     public void hideLetter(Long userId, LetterType letterType, List<Long> letterIds) {
-
         userRepository.findById(userId).orElseThrow(() -> new GlobalException(ErrorStatus.USER_NOT_FOUND));
 
         if (letterType.equals(LetterType.RECEIVE)){
