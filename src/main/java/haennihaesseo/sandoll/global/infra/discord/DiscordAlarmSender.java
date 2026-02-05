@@ -24,7 +24,6 @@ public class DiscordAlarmSender {
 
   public void sendDiscordAlarm(Exception exception, HttpServletRequest httpServletRequest) {
     if (discordAlarmEnabled) {
-      log.info("[*] Send Discord Alarm");
       webClient.post()
           .uri(webHookUrl)
           .contentType(MediaType.APPLICATION_JSON)

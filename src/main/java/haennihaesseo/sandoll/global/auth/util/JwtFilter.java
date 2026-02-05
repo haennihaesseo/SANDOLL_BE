@@ -30,7 +30,6 @@ public class JwtFilter extends OncePerRequestFilter {
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
     String token = extractToken(request);
 
-    log.info("[JWT FILTER] token={}", token);
     // 1) 토큰 없으면 그냥 통과
     if (token == null || token.isBlank()) {
       filterChain.doFilter(request, response);

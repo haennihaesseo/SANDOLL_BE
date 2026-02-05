@@ -1,11 +1,13 @@
 package haennihaesseo.sandoll.global.infra.python;
 
+import haennihaesseo.sandoll.global.exception.GlobalException;
 import haennihaesseo.sandoll.domain.letter.exception.LetterException;
 import haennihaesseo.sandoll.domain.letter.status.LetterErrorStatus;
 import haennihaesseo.sandoll.global.infra.python.dto.BgmStepEvent;
 import haennihaesseo.sandoll.global.infra.python.dto.ContextAnalysisRequest;
 import haennihaesseo.sandoll.global.infra.python.dto.PythonVoiceAnalysisRequest;
 import haennihaesseo.sandoll.global.infra.python.dto.PythonVoiceAnalysisResponse;
+import haennihaesseo.sandoll.global.status.ErrorStatus;
 import java.time.Duration;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -31,9 +34,8 @@ public class PythonAnalysisClient {
     }
 
     public PythonVoiceAnalysisResponse requestVoiceAnalysis(PythonVoiceAnalysisRequest request) {
-        log.info("[Python] 분석 요청 - voiceUrl: {}, 단어 수: {}", request.getVoiceUrl(), request.getWords().size());
-
-        PythonVoiceAnalysisResponse response = webClient.post()
+        try {
+            PythonVoiceAnalysisResponse response = webClient.post()
                 .uri("/api/voice")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(request)
@@ -41,11 +43,26 @@ public class PythonAnalysisClient {
                 .bodyToMono(PythonVoiceAnalysisResponse.class)
                 .block(Duration.ofSeconds(20)); // 최대 20초 대기, 추후 테스트 후 조정할 예정
 
-        log.info("[Python] 분석 완료 - 추천 폰트: {}, 분석 결과: {}",
+            log.info("[Python] 분석 완료 - 추천 폰트: {}, 분석 결과: {}",
                 response != null ? response.getRecommendedFonts() : "null",
                 response != null ? response.getAnalysisResult() : "null");
 
-        return response;
+            return response;
+
+        } catch (WebClientResponseException e) {
+            // 파이썬 서버가 4xx/5xx 응답
+            log.error("[Python] 서버 응답 에러: {}", e.getMessage());
+            throw new GlobalException(ErrorStatus.PYTHON_SERVER_ERROR);
+        } catch (IllegalStateException e) {
+            // 타임아웃
+            log.error("[Python] 요청 타임아웃", e);
+            throw new GlobalException(ErrorStatus.REQUEST_TIMEOUT);
+        } catch (Exception e) {
+            // 네트워크 에러 등
+            log.error("[Python] 요청 실패: {}", e.getMessage());
+            throw new GlobalException(ErrorStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 
     public Flux<BgmStepEvent> requestContextAnalysis(ContextAnalysisRequest request){

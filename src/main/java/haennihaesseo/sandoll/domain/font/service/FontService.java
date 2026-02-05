@@ -37,15 +37,16 @@ public class FontService {
   private final CachedLetterRepository cachedLetterRepository;
   private final FontRepository fontRepository;
   private final FontConverter fontConverter;
-  private final int SELECT_COUNT = 3; // 한 번에 추천할 폰트 개수
   private final TemplateRepository templateRepository;
+
+  private final int SELECT_COUNT = 3; // 한 번에 추천할 폰트 개수
+  private final int ONE_LINE_WORD_COUNT = 20; // 한 줄에 들어가는 글자 수 기준
 
   /**
    * 폰트 적용
    * @param letterId
    * @param fontId
    */
-  @Transactional
   public void applyFont(String letterId, Long fontId) {
     // Redis에서 CachedLetter 조회
     CachedLetter cachedLetter = cachedLetterRepository.findById(letterId)
@@ -63,14 +64,13 @@ public class FontService {
     String content = cachedLetter.getContent();
     for (char c : content.toCharArray()) {
       if (c == '\n') {
-        charCount += 20;
+        charCount += ONE_LINE_WORD_COUNT;
       } else {
         charCount += 1;
       }
     }
 
     Size size = Size.fromLength(charCount);
-    //TODO:추후 템플릿 저장 후 주석 풀기, 현재는 디폴트 무지 템플릿으로 설정
     Template setTemplate = templateRepository.findByNameAndSize("무지", size); // Default인 무지로 설정
     cachedLetter.setTemplateId(setTemplate.getTemplateId());
     cachedLetter.setTemplateUrl(setTemplate.getImageUrl());

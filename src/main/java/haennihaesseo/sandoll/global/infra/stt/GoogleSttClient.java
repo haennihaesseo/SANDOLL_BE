@@ -60,11 +60,9 @@ public class GoogleSttClient {
             List<SpeechRecognitionResult> results;
 
             if (audioBytes.length <= SYNC_MAX_BYTES) {
-                log.info("짧은 오디오 감지 ({}bytes), 동기 recognize 사용", audioBytes.length);
                 RecognizeResponse response = speechClient.recognize(config, audio);
                 results = response.getResultsList();
             } else {
-                log.info("긴 오디오 감지 ({}bytes), longRunningRecognize 사용", audioBytes.length);
                 LongRunningRecognizeResponse response = speechClient
                         .longRunningRecognizeAsync(config, audio)
                         .get();

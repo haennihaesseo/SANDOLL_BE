@@ -10,11 +10,13 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @Slf4j
@@ -82,6 +84,24 @@ public class GlobalExceptionHandler {
         log.error("Max upload size exceeded: {}", ex.getMessage());
         log.error("Stack trace: ", ex);
         return ApiResponse.fail(ErrorStatus.PAYLOAD_TOO_LARGE, "파일 크기가 너무 큽니다.");
+    }
+
+    /**
+     * HttpRequestMethodNotSupportedException 처리 (지원하지 않는 HTTP 메소드 요청이 들어온 경우)
+     */
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ApiResponse<Void>> handleMethodNotSupported(HttpRequestMethodNotSupportedException ex) {
+        log.error("HTTP method not supported: {}", ex.getMethod());
+        return ApiResponse.fail(ErrorStatus.METHOD_NOT_ALLOWED);
+    }
+
+    /**
+     * NoHandlerFoundException 처리 (존재하지 않는 URL 요청이 들어온 경우)
+     */
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleNoHandlerFound(NoHandlerFoundException ex) {
+        log.error("No handler found for request: {}", ex.getRequestURL());
+        return ApiResponse.fail(ErrorStatus.NOT_FOUND);
     }
 
     /**

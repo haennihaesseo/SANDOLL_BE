@@ -41,14 +41,11 @@ public class OAuthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
 
   @Override
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-    log.info("OAuth2 로그인 성공 핸들러 호출됨");
     OAuth2AuthenticationToken token = (OAuth2AuthenticationToken) authentication;
     OAuth2UserInfo oAuth2UserInfo = extractOAuth2UserInfo(token, token.getAuthorizedClientRegistrationId());
 
     String providerId = oAuth2UserInfo.getProviderId();
     String provider = oAuth2UserInfo.getProvider();
-    log.info("providerId: {}", providerId);
-    log.info("provider: {}", provider);
 
     String redirectPath = extractRedirectPath(request);
 
@@ -73,7 +70,6 @@ public class OAuthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
 
   // 기존 유저 처리
   private void handleExistingUser(HttpServletRequest request, HttpServletResponse response, User user, String redirectPath) throws IOException {
-    log.info("기존 유저입니다. 임시 키를 발급합니다.");
 
     // 임시 키 생성
     String tmpKey = jwtUtil.generateTmpKey(user.getUserId());
@@ -84,7 +80,6 @@ public class OAuthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
 
   // 신규 유저 처리
   private void handleNewUser(HttpServletRequest request, HttpServletResponse response, String providerId, String provider, String redirectPath) throws IOException {
-    log.info("신규 유저입니다. 회원가입 진행 후 임시 키를 발급합니다.");
 
     // 유저 생성
     User newUser = User.builder()
@@ -95,7 +90,6 @@ public class OAuthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
 
     // 임시 키 생성
     String tmpKey = jwtUtil.generateTmpKey(user.getUserId());
-    redisClient.setData("TMP_KEY", tmpKey, user.getUserId().toString(), TMP_KEY_EXPIRATION_MS);
     String redirectURI = buildRedirectURI(tmpKey, redirectPath);
     getRedirectStrategy().sendRedirect(request, response, redirectURI);
   }
@@ -112,11 +106,11 @@ public class OAuthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
 
   private String extractRedirectPath(HttpServletRequest request) {
     String state = request.getParameter("state");
-    if (state == null || !state.contains("_")) {
+    if (state == null || !state.contains(".")) {
       return null;
     }
 
-    int separatorIndex = state.lastIndexOf("_");
+    int separatorIndex = state.lastIndexOf(".");
     String encodedRedirect = state.substring(separatorIndex + 1);
 
     try {

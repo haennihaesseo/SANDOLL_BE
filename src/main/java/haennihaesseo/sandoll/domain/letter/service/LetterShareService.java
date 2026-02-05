@@ -20,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -76,6 +77,7 @@ public class LetterShareService {
      * @param userId
      * @param letterId
      */
+    @Transactional
     public void saveLetterInMyBox(Long userId, Long letterId) {
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new GlobalException(ErrorStatus.USER_NOT_FOUND));

@@ -17,6 +17,8 @@ public enum ErrorStatus implements BaseErrorStatus {
    *  404 : 존재하지 않는 정보에 대한 요청.
    *  405 : 허용되지 않은 메소드입니다.
    *  409 : 데이터 무결성 위반(중복 등)
+   *  408 : 요청 시간 초과
+   *  413 : 요청한 데이터의 크기가 너무 큼
    */
 
   BAD_REQUEST(HttpStatus.BAD_REQUEST, "400", "잘못된 요청입니다."),
@@ -30,11 +32,14 @@ public enum ErrorStatus implements BaseErrorStatus {
   PAYLOAD_TOO_LARGE(HttpStatus.PAYLOAD_TOO_LARGE, "413", "요청한 데이터의 크기가 너무 큽니다."),
   TOO_MANY_REQUESTS(HttpStatus.TOO_MANY_REQUESTS, "429", "요청이 너무 많습니다. 잠시 후 다시 시도해주세요."),
   JSON_PARSING_FAIL(HttpStatus.BAD_REQUEST, "400", "Json 파싱에 실패하였습니다."),
+
+  REQUEST_TIMEOUT(HttpStatus.REQUEST_TIMEOUT, "408", "파이썬 서버 요청 시간이 초과되었습니다."),
   /**
    *  Error Code
    *  500 : 서버 내부 오류
    */
   STT_SERVICE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "500", "STT 서비스 오류입니다."),
+  PYTHON_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "500", "파이썬 서버 오류입니다."),
   INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "500", "서버 내부 오류입니다.");
 
   private final HttpStatus httpStatus;

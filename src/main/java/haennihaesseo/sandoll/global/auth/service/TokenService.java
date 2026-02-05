@@ -30,7 +30,6 @@ public class TokenService {
    * @param tmpKey
    * @return
    */
-  @Transactional
   public TokenDto.TokenResponseDto issueTokens(String tmpKey) {
     // 임시 토큰 유효성 검증
     jwtUtil.validateTmpKey(tmpKey);

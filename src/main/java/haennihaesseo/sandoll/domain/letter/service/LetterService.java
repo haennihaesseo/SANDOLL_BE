@@ -32,6 +32,8 @@ public class LetterService {
   private final LetterConverter letterConverter;
   private final FontRepository fontRepository;
 
+  private final int MIN_CONTENT_LENGTH = 10;
+
   /**
    * 음성 파일 저장 및 STT 편지 내용 조회, 편지 작성 키 발급
    * @param file
@@ -43,7 +45,7 @@ public class LetterService {
     SttResult sttResult = googleSttClient.transcribe(file);
 
     // 10글자 이하일 경우 예외 처리
-    if (sttResult.getFullText().replaceAll("\\s+", "").length() <= 10) {
+    if (sttResult.getFullText().replaceAll("\\s+", "").length() <= MIN_CONTENT_LENGTH) {
       throw new LetterException(LetterErrorStatus.TOO_SHORT_CONTENT);
     }
 

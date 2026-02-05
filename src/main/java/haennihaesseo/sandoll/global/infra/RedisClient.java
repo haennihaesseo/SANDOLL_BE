@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.Objects;
 
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -27,6 +28,14 @@ public class RedisClient {
 
   public void deleteData(String prefix, String key){
     redisTemplate.delete(prefix + ":" + key);
+  }
+
+  public boolean acquireLock(String key, String value, long timeout) {
+    ValueOperations<String, String> ops = redisTemplate.opsForValue();
+    return ops.setIfAbsent(key, value, Duration.ofMillis(timeout)); // key가 없으면 true, 이미 있으면 false
+  }
+
+  public void releaseLock(String key) {redisTemplate.delete(key);
   }
 
 }
