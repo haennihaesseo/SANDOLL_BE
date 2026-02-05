@@ -48,15 +48,18 @@ public class PythonAnalysisClient {
             return response;
 
         } catch (WebClientResponseException e) {
-        // 파이썬 서버가 4xx/5xx 응답
-        throw new GlobalException(ErrorStatus.PYTHON_SERVER_ERROR);
-    } catch (IllegalStateException e) {
-        // 타임아웃
-        throw new GlobalException(ErrorStatus.REQUEST_TIMEOUT);
-    } catch (Exception e) {
-        // 네트워크 에러 등
-        throw new GlobalException(ErrorStatus.INTERNAL_SERVER_ERROR);
-    }
+            // 파이썬 서버가 4xx/5xx 응답
+            log.error("[Python] 서버 응답 에러: {}", e.getMessage());
+            throw new GlobalException(ErrorStatus.PYTHON_SERVER_ERROR);
+        } catch (IllegalStateException e) {
+            // 타임아웃
+            log.error("[Python] 요청 타임아웃", e);
+            throw new GlobalException(ErrorStatus.REQUEST_TIMEOUT);
+        } catch (Exception e) {
+            // 네트워크 에러 등
+            log.error("[Python] 요청 실패: {}", e.getMessage());
+            throw new GlobalException(ErrorStatus.INTERNAL_SERVER_ERROR);
+        }
 
     }
 

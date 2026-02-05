@@ -90,7 +90,6 @@ public class OAuthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
 
     // 임시 키 생성
     String tmpKey = jwtUtil.generateTmpKey(user.getUserId());
-    redisClient.setData("TMP_KEY", tmpKey, user.getUserId().toString(), TMP_KEY_EXPIRATION_MS);
     String redirectURI = buildRedirectURI(tmpKey, redirectPath);
     getRedirectStrategy().sendRedirect(request, response, redirectURI);
   }

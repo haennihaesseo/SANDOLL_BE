@@ -12,6 +12,7 @@ import haennihaesseo.sandoll.global.infra.RedisClient;
 import haennihaesseo.sandoll.global.infra.python.PythonAnalysisClient;
 import haennihaesseo.sandoll.global.infra.python.dto.PythonVoiceAnalysisRequest;
 import haennihaesseo.sandoll.global.infra.python.dto.PythonVoiceAnalysisResponse;
+import haennihaesseo.sandoll.global.status.ErrorStatus;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,6 +52,11 @@ public class LetterVoiceService {
       // 파이썬 서버에 분석 요청
       PythonVoiceAnalysisRequest request = letterConverter.toAnalysisRequest(cachedLetter);
       PythonVoiceAnalysisResponse pythonResponse = pythonAnalysisClient.requestVoiceAnalysis(request);
+
+      if (pythonResponse == null || pythonResponse.getRecommendedFonts() == null) {
+        log.error("파이썬 분석 결과 없음 letterId={}", letterId);
+        throw new LetterException(ErrorStatus.PYTHON_SERVER_ERROR);
+      }
 
       log.info("[분석 완료] letterId={}, 추천 폰트: {}", letterId, pythonResponse.getRecommendedFonts());
 
