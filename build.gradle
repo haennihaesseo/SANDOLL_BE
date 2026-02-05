@@ -69,6 +69,10 @@ dependencies {
 	implementation 'com.google.cloud:google-cloud-speech:4.52.0'
 
 	implementation 'org.apache.commons:commons-text:1.11.0'
+
+	// Rate Limiting (Bucket4j + Redis)
+	implementation 'com.bucket4j:bucket4j-core:8.10.1'
+	implementation 'com.bucket4j:bucket4j-redis:8.10.1'
 }
 
 tasks.named('test') {

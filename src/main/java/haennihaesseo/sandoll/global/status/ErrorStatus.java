@@ -30,6 +30,7 @@ public enum ErrorStatus implements BaseErrorStatus {
 
   USER_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당 유저가 존재하지 않습니다."),
   PAYLOAD_TOO_LARGE(HttpStatus.PAYLOAD_TOO_LARGE, "413", "요청한 데이터의 크기가 너무 큽니다."),
+  TOO_MANY_REQUESTS(HttpStatus.TOO_MANY_REQUESTS, "429", "요청이 너무 많습니다. 잠시 후 다시 시도해주세요."),
   JSON_PARSING_FAIL(HttpStatus.BAD_REQUEST, "400", "Json 파싱에 실패하였습니다."),
 
   REQUEST_TIMEOUT(HttpStatus.REQUEST_TIMEOUT, "408", "파이썬 서버 요청 시간이 초과되었습니다."),
