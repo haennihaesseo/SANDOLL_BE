@@ -28,6 +28,13 @@ jobs:
           EOF
         shell: bash
 
+      - name: Generate environment file
+        run: |
+          umask 022
+          cat > .env.prod <<'EOF'
+          ${{ secrets.ENV_PROD }}
+          EOF
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
 
@@ -76,9 +83,6 @@ jobs:
           key: ${{ secrets.RELEASE_KEY }} 
           port: 22
           script: |
-            # 기존에 S3 배포 시 만들던 .env.prod 파일을 서버에 직접 생성
-            echo "${{ secrets.ENV_PROD }}" > /home/ubuntu/.env.prod
-            
             # 배포 스크립트 실행
             sudo chmod +x /home/ubuntu/deploy.sh
             sudo /home/ubuntu/deploy.sh
