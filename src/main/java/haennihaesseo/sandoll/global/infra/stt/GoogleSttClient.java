@@ -1,5 +1,6 @@
 package haennihaesseo.sandoll.global.infra.stt;
 
+import com.google.api.gax.rpc.InvalidArgumentException;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.speech.v1.*;
 import com.google.cloud.speech.v1.RecognitionConfig.AudioEncoding;
@@ -71,7 +72,7 @@ public class GoogleSttClient {
             }
 
             return parseResults(results);
-        } catch (IOException e) {
+        } catch (IOException | InvalidArgumentException e) {
             log.error("Google STT 처리 실패", e);
             throw new GlobalException(ErrorStatus.STT_SERVICE_ERROR);
         } catch (InterruptedException e) {
