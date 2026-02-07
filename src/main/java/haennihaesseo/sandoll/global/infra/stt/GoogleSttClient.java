@@ -66,7 +66,7 @@ public class GoogleSttClient {
 
             List<SpeechRecognitionResult> results;
 
-            if (duration < 20) {
+            if (duration < 18) { // 안정적인 처리를 위해 임계값에 여유를 둠
                 // 짧은 오디오: inline content로 동기 처리 (빠름)
                 RecognitionAudio audio = RecognitionAudio.newBuilder()
                         .setContent(ByteString.copyFrom(audioBytes))
