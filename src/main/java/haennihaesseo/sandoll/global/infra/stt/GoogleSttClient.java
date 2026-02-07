@@ -41,7 +41,7 @@ public class GoogleSttClient {
     public SttResult transcribe(MultipartFile audioFile, int duration) {
         try {
             byte[] audioBytes = audioFile.getBytes();
-            RecognitionConfig.AudioEncoding encoding = AudioEncoding.WEBM_OPUS;
+            RecognitionConfig.AudioEncoding encoding = AudioEncoding.OGG_OPUS;
 
             return transcribeAudio(audioBytes, encoding, duration);
         } catch (IOException e) {
@@ -91,7 +91,7 @@ public class GoogleSttClient {
                 .setLanguageCode(LANGUAGE_CODE)
                 .setEnableWordTimeOffsets(true)
                 .setEnableAutomaticPunctuation(true)
-                .setSampleRateHertz(48000) // webm 의 일반적인 샘플레이트, 현재 프론트에서 webm 만 보내므로 고정
+//                .setSampleRateHertz(48000) // webm 의 일반적인 샘플레이트, 현재 프론트에서 webm 만 보내므로 고정
                 .setModel("default");
 
         return builder.build();
