@@ -41,7 +41,7 @@ public class GoogleSttClient {
     public SttResult transcribe(MultipartFile audioFile, int duration) {
         try {
             byte[] audioBytes = audioFile.getBytes();
-            RecognitionConfig.AudioEncoding encoding = AudioEncoding.OGG_OPUS;
+            RecognitionConfig.AudioEncoding encoding = AudioEncoding.WEBM_OPUS;
 
             return transcribeAudio(audioBytes, encoding, duration);
         } catch (IOException e) {
@@ -59,7 +59,7 @@ public class GoogleSttClient {
 
             List<SpeechRecognitionResult> results;
 
-            if (duration <= 60) { // 1분 이하면 동기 처리
+            if (duration <= 15) { // 샘플레이트 고려 시 약 1분 이하
                 log.info("1분 이하 오디오, 동기 STT 처리 시작");
                 RecognizeResponse response = speechClient.recognize(config, audio);
                 results = response.getResultsList();
@@ -91,7 +91,7 @@ public class GoogleSttClient {
                 .setLanguageCode(LANGUAGE_CODE)
                 .setEnableWordTimeOffsets(true)
                 .setEnableAutomaticPunctuation(true)
-//                .setSampleRateHertz(48000) // webm 의 일반적인 샘플레이트, 현재 프론트에서 webm 만 보내므로 고정
+                .setSampleRateHertz(48000) // webm 의 일반적인 샘플레이트, 현재 프론트에서 webm 만 보내므로 고정
                 .setModel("default");
 
         return builder.build();
