@@ -2,7 +2,6 @@ package haennihaesseo.sandoll.domain.font.service;
 
 
 import haennihaesseo.sandoll.domain.deco.entity.Template;
-import haennihaesseo.sandoll.domain.deco.entity.enums.Size;
 import haennihaesseo.sandoll.domain.deco.repository.TemplateRepository;
 import haennihaesseo.sandoll.domain.font.dto.response.ContextFontResponse;
 import haennihaesseo.sandoll.domain.font.dto.response.RecommendFontResponse;
@@ -22,12 +21,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -59,19 +56,7 @@ public class FontService {
     // 폰트 적용
     cachedLetter.setFont(font.getFontId(), font.getFontUrl());
 
-    // 글자수 세기 -> 전체 글자수 + \n은 20자로 간주 (바뀔 수 있음)
-    int charCount = 0;
-    String content = cachedLetter.getContent();
-    for (char c : content.toCharArray()) {
-      if (c == '\n') {
-        charCount += ONE_LINE_WORD_COUNT;
-      } else {
-        charCount += 1;
-      }
-    }
-
-    Size size = Size.fromLength(charCount);
-    Template setTemplate = templateRepository.findByNameAndSize("무지", size); // Default인 무지로 설정
+    Template setTemplate = templateRepository.findByName("무지"); // Default인 무지로 설정
     cachedLetter.setTemplateId(setTemplate.getTemplateId());
     cachedLetter.setTemplateUrl(setTemplate.getImageUrl());
     cachedLetterRepository.save(cachedLetter);

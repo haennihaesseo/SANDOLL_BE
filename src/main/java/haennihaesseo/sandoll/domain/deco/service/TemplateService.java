@@ -4,7 +4,6 @@ import haennihaesseo.sandoll.domain.deco.converter.DecoConverter;
 import haennihaesseo.sandoll.domain.deco.dto.response.TemplateImageResponse;
 import haennihaesseo.sandoll.domain.deco.dto.response.TemplatesResponse;
 import haennihaesseo.sandoll.domain.deco.entity.Template;
-import haennihaesseo.sandoll.domain.deco.entity.enums.Size;
 import haennihaesseo.sandoll.domain.deco.exception.DecoException;
 import haennihaesseo.sandoll.domain.deco.repository.TemplateRepository;
 import haennihaesseo.sandoll.domain.deco.status.DecoErrorStatus;
@@ -27,25 +26,20 @@ public class TemplateService {
     private final DecoConverter decoConverter;
     private final CachedLetterRepository cachedLetterRepository;
     private final List<String> TEMPLATE_ORDER = List.of(
-            "무지",
-//            "줄",
-            "모눈",
-            "설날",
-            "생일P",
-            "생일B"
+            "무지", "모눈", "라인", "사과", "축하", "기쁨", "최고", "붉은말", "새해", "설날", "선물", "케이크"
     );
 
     /**
-     * 템플릿 목록 조회 (이름별 SMALL 사이즈 하나씩)
+     * 템플릿 목록 조회 (이름별 하나씩)
      * @return templates(templateId, name, previewImageUrl)
      */
     public TemplatesResponse getAllTemplates() {
-        List<Template> templates = templateRepository.findByNameInAndSize(TEMPLATE_ORDER, Size.SMALL);
+        List<Template> templates = templateRepository.findByNameIn(TEMPLATE_ORDER);
         return decoConverter.toTemplatesResponse(templates, TEMPLATE_ORDER);
     }
 
     /**
-     * preview 이미지 선택한 템플릿 내용 길이에 맞게 적용
+     * preview 이미지 선택한 템플릿 적용
      * @param letterId
      * @param templateId
      * @return
@@ -58,10 +52,7 @@ public class TemplateService {
         Template template = templateRepository.findById(templateId)
                 .orElseThrow(() -> new DecoException(DecoErrorStatus.TEMPLATE_NOT_FOUND));
 
-        int length = (cachedLetter.getContent() != null) ? cachedLetter.getContent().length() : 0;
-        Size size = Size.fromLength(length);
-
-        Template setTemplate = templateRepository.findByNameAndSize(template.getName(), size);
+        Template setTemplate = templateRepository.findByName(template.getName());
 
         if (setTemplate == null)
             throw new DecoException(DecoErrorStatus.TEMPLATE_NOT_FOUND);

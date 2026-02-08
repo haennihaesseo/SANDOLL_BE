@@ -1,7 +1,5 @@
 package haennihaesseo.sandoll.domain.deco.entity;
 
-import haennihaesseo.sandoll.domain.deco.entity.enums.Size;
-import haennihaesseo.sandoll.domain.deco.entity.enums.Type;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,10 +17,6 @@ public class Template {
 
     @Column(name = "name", nullable = false)
     private String name;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "size", nullable = false)
-    private Size size;
 
     @Column(name = "image_url", nullable = false)
     private String imageUrl;
