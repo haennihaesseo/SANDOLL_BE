@@ -87,7 +87,14 @@ public class FontService {
     CachedLetter cachedLetter = cachedLetterRepository.findById(letterId)
         .orElseThrow(() -> new LetterException(LetterErrorStatus.LETTER_NOT_FOUND));
 
+    List<Font> voiceFonts = fontRepository.findAllByFontIdIn(cachedLetter.getCurrentRecommendFontIds());
+    List<RecommendFont> voiceResponse = fontConverter.toRecommendFontList(voiceFonts, cachedLetter.getVoiceFontKeywords());
+
     List<ContextFontResponse> contextFontResponses = cachedLetter.getContextFonts();
+
+    if (contextFontResponses == null)
+      throw new FontException(FontErrorStatus.FONT_RECOMMENDATION_IN_PROGRESS);
+
     List<RecommendFont> contextResponse = contextFontResponses.stream()
             .map(cf ->{
               Font font = fontRepository.findById(cf.getFontId())
@@ -100,9 +107,6 @@ public class FontService {
               );
             })
             .toList();
-
-    List<Font> voiceFonts = fontRepository.findAllByFontIdIn(cachedLetter.getCurrentRecommendFontIds());
-    List<RecommendFont> voiceResponse = fontConverter.toRecommendFontList(voiceFonts, cachedLetter.getVoiceFontKeywords());
 
     return fontConverter.toRecommendFontResponse(voiceResponse, contextResponse);
   }
