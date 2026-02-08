@@ -29,4 +29,6 @@ public interface LetterRepository extends JpaRepository<Letter, Long> {
 
     @Query("select l from Letter l where l.sender.userId = :userId and l.letterStatus = :letterStatus order by l.createdAt asc")
     List<Letter> findBySenderUserIdAndLetterStatusOrderByCreatedAtAsc(@Param("userId") Long userId, @Param("letterStatus") LetterStatus letterStatus);
+
+    Integer countBySenderUserIdAndLetterStatus(Long userId, LetterStatus letterStatus);
 }
