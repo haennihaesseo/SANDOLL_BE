@@ -28,7 +28,7 @@ public class TemplateService {
     private final CachedLetterRepository cachedLetterRepository;
     private final List<String> TEMPLATE_ORDER = List.of(
             "무지",
-            "줄",
+//            "줄",
             "모눈",
             "설날",
             "생일P",
